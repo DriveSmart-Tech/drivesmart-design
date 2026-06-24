@@ -1,0 +1,44 @@
+/* ============================================================================
+   DRIVESMART · PRINT / REPORT THEME (light)
+   For generated report windows + PDF export. Light, ink-on-paper, print-safe.
+   Scope it under .report so it never collides with the dark dashboard system.
+
+   Usage in a report popup:
+     <link rel="stylesheet" href="print.css">
+     <body class="report"> … </body>
+   ============================================================================ */
+@page { size: letter; margin: 0.6in; }
+
+.report {
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  color: #1c2026; margin: 0; padding: 24px; background: #fff;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.report * { box-sizing: border-box; }
+
+.report h1 { font-size: 22px; margin: 0 0 4px; color: #0a0e14; letter-spacing: -0.02em; }
+.report h2 { font-size: 16px; margin: 24px 0 12px; color: #1c2026; border-bottom: 1px solid #e2e6ec; padding-bottom: 6px; }
+.report .meta { color: #5e6370; font-size: 12px; margin-bottom: 24px; }
+
+.report table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0; page-break-inside: auto; }
+.report thead { display: table-header-group; }
+.report tr { page-break-inside: avoid; page-break-after: auto; }
+.report th { text-align: left; padding: 8px 10px; background: #f0f4f9; border-bottom: 1px solid #c2c8d2; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: #5e6370; }
+.report td { padding: 8px 10px; border-bottom: 1px solid #eef1f6; vertical-align: top; }
+.report td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.report .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 24px; }
+.report .kpi { border: 1px solid #e2e6ec; border-radius: 6px; padding: 12px; }
+.report .kpi-num { font-size: 22px; font-weight: 700; color: #0a0e14; letter-spacing: -0.02em; }
+.report .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #5e6370; margin-top: 4px; }
+
+.report .status { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.report .s-paid      { background: #d4f5e2; color: #056b3d; }
+.report .s-unpaid    { background: #fde0dd; color: #7a1f17; }
+.report .s-pending   { background: #fde8d2; color: #7a4a13; }
+.report .s-cancelled { background: #e6e8ec; color: #4a4e57; }
+.report .s-dead_deal { background: #fde8d2; color: #7a4a13; }
+
+.report .footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid #e2e6ec; font-size: 10px; color: #80848e; text-align: center; }
+.report .no-print { margin: 16px 0; padding: 12px; background: #f0f4f9; border-radius: 6px; font-size: 12px; }
+@media print { .report .no-print { display: none; } }

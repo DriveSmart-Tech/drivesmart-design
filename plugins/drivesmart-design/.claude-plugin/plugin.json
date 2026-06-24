@@ -1,0 +1,23 @@
+{
+  "name": "drivesmart-design",
+  "version": "1.0.0",
+  "description": "Install, reference, or audit/migrate the DriveSmart design system — dark glassmorphism, vanilla CSS, NO React / Tailwind / build / Node. Spin it into a new project, build UI with its classes, or audit an existing project's UI and migrate it onto the system. Also the reference for \"what class/token do I use for X\". Trigger: /drivesmart-design.",
+  "author": {
+    "name": "DriveSmart",
+    "email": "cody@cubixai.dev"
+  },
+  "keywords": [
+    "design-system",
+    "css",
+    "glassmorphism",
+    "drivesmart",
+    "ui",
+    "tokens",
+    "dark-theme",
+    "vanilla-css",
+    "zero-framework",
+    "audit",
+    "migrate"
+  ],
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,34 @@
+{
+  "name": "drivesmart",
+  "owner": {
+    "name": "DriveSmart",
+    "email": "cody@cubixai.dev"
+  },
+  "metadata": {
+    "description": "DriveSmart internal Claude Code marketplace — the DriveSmart design system as an installable skill. Dark glassmorphism, vanilla CSS, zero framework (no React / Tailwind / build / Node): one drivesmart.css carries the :root tokens, layout utilities, and every component, with optional helpers for a print theme, Chart.js theming, and count-up. Install it into a project, build UI with its classes, reference what token/class to use, or audit + migrate an existing UI onto the system.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "drivesmart-design",
+      "source": "./plugins/drivesmart-design",
+      "description": "Install, reference, or audit/migrate the DriveSmart design system — dark glassmorphism, vanilla CSS, NO React / Tailwind / build / Node. Spin it into a new project, build UI with its classes, or audit an existing project's UI and migrate it onto the system. Also the reference for \"what class/token do I use for X\". Trigger: /drivesmart-design.",
+      "version": "1.0.0",
+      "category": "design",
+      "tags": [
+        "design-system",
+        "css",
+        "glassmorphism",
+        "drivesmart",
+        "ui",
+        "tokens",
+        "dark-theme",
+        "vanilla-css",
+        "zero-framework",
+        "skill",
+        "audit",
+        "migrate"
+      ]
+    }
+  ]
+}
