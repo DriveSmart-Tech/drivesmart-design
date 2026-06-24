@@ -1,17 +1,54 @@
-# DriveSmart Claude Code Marketplace
+# DriveSmart Design System
 
-Internal Claude Code marketplace for DriveSmart. Ships the **DriveSmart design system** as an
-installable skill so any project — or any teammate's Claude Code session — can spin it up,
-build against it, or migrate an existing UI onto it.
+Dark glassmorphism UI kit for DriveSmart tools. **One CSS file, no build, no framework.**
+Link it, write HTML. No React / shadcn / Tailwind / Node.
 
-## What's inside
+**▶ Live gallery:** https://drivesmart-tech.github.io/drivesmart-design/ — every component,
+copy-paste snippets, light/dark + roundness toggles, "Copy full CSS".
 
-| Plugin | What it does |
-|---|---|
-| **drivesmart-design** | Install, reference, or audit/migrate the DriveSmart design system — dark glassmorphism, vanilla CSS, **zero framework** (no React / Tailwind / build / Node). Trigger: `/drivesmart-design`. |
+```html
+<link rel="stylesheet" href="drivesmart.css">
+<!-- icons (optional): -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
-## Install
+<body class="bg-grid-pattern">
+  <div class="aurora-bg"></div>
+  <div class="glass-card card-mesh-success p-5">
+    <div class="metric text-success">12,847</div>
+    <div class="label-caps text-2 mt-2">Paid</div>
+  </div>
+</body>
+```
 
+Fonts (Hanken Grotesk / Inter / Geist) are `@import`ed inside `drivesmart.css`.
+
+## Files
+
+- **`drivesmart.css`** — the system (tokens + utilities + components). Link this.
+- **`print.css`** — light report/PDF theme (`<body class="report">`).
+- **`chart-theme.js`** — Chart.js theme → `DS_CHART` (load after chart.js).
+- **`count-up.js`** — animates `[data-count]` numbers.
+- **`index.html`** — the live gallery (served via GitHub Pages above).
+- **[`DESIGN.md`](DESIGN.md)** — full spec: every token, class, rule.
+- **[`BRAND.md`](BRAND.md)** — non-code brand spec for designers / marketing.
+
+## What's in it
+
+Glass cards · KPI-as-composition · buttons (4 variants × 4 sizes) · forms (input/select/textarea/field/
+input-group/switch/checkbox/radio/range) · status chips · badges · tags · dealer pills · avatars · key-value
+lists · sortable glass tables · delta · progress · nav (side/top/tabs/segmented/pagination/breadcrumbs) ·
+overlays (menu/modal/drawer/accordion/popover/tooltip/kbd) · feedback (alert/toast/skeleton/spinner/empty/banner) ·
+aurora + grid backdrops · motion (reveal, count-up, shimmer) · light theme + roundness scale · curated utilities.
+
+## Themes
+
+- Light: `<html data-theme="light">` — base hexes flip, everything else re-derives via `color-mix`.
+- Roundness: `<html data-radius="sharp|round">` — re-rounds the whole UI.
+
+## Use it with Claude Code (the skill)
+
+This system ships as a **Claude Code skill** — `/drivesmart-design` — distributed through the
+DriveSmart marketplace ([`DriveSmart-Tech/drivesmart-marketplace`](https://github.com/DriveSmart-Tech/drivesmart-marketplace)).
 In any Claude Code session:
 
 ```
@@ -19,29 +56,19 @@ In any Claude Code session:
 /plugin install drivesmart-design@drivesmart
 ```
 
-Then the skill is available via `/drivesmart-design`:
+Then:
 
-- `/drivesmart-design` (or `install`) — drop the system into the current project.
-- `/drivesmart-design audit` — read-only audit of an existing UI vs the system → `DRIVESMART-REVIEW.md`.
-- `/drivesmart-design migrate` — audit, then migrate the UI onto the system surface-by-surface.
-- `/drivesmart-design reference` — answer "what class / token do I use for X".
+| Command | What it does |
+|---|---|
+| `/drivesmart-design` (or `install`) | Drop the system into the current project + scaffold an app-shell. |
+| `/drivesmart-design audit` | **Read-only** audit of an existing UI vs the system → `DRIVESMART-REVIEW.md`. |
+| `/drivesmart-design migrate` | Audit, then migrate the UI onto the system surface-by-surface. |
+| `/drivesmart-design reference` | Answer "what class / token do I use for X". |
 
-## The design system
+The skill source lives in [`skill/drivesmart-design/`](skill/drivesmart-design/) and is mirrored
+into the marketplace repo. To install without the marketplace:
+`cp -r skill/drivesmart-design ~/.claude/skills/`.
 
-One stylesheet (`drivesmart.css`) carries the `:root` tokens, layout utilities, and every
-component. Optional helpers add a print theme (`print.css`), Chart.js theming (`chart-theme.js`),
-and count-up (`count-up.js`). Link the CSS and write HTML — no build step, no framework.
+---
 
-Full spec: [`plugins/drivesmart-design/skills/drivesmart-design/assets/DESIGN.md`](plugins/drivesmart-design/skills/drivesmart-design/assets/DESIGN.md).
-Brand spec: [`BRAND.md`](plugins/drivesmart-design/skills/drivesmart-design/assets/BRAND.md).
-
-## Repo layout
-
-```
-.claude-plugin/marketplace.json        # marketplace manifest (lists plugins)
-plugins/drivesmart-design/
-  .claude-plugin/plugin.json           # plugin manifest
-  skills/drivesmart-design/
-    SKILL.md                           # the skill
-    assets/                            # drivesmart.css + helpers + DESIGN.md / BRAND.md / starter.html
-```
+Extracted from the DriveSmart Dealer Sales Payment Dashboard.
