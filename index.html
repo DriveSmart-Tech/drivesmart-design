@@ -30,16 +30,18 @@
   .nav-link.active { background: radial-gradient(140% 120% at 0% 50%, var(--primary-ghost), transparent 64%), var(--fill-1); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 16%, transparent); }
   .nav-link .material-symbols-outlined { font-size: 16px; opacity: .8; }
 
-  /* topbar ----------------------------------------------------------------- */
-  .app-topbar { position: sticky; top: 0; z-index: 10; min-height: 58px; display: flex; align-items: center; gap: 14px; padding: 10px 28px; }
-  .searchbar { display: inline-flex; align-items: center; gap: 8px; min-width: 280px; padding: 8px 12px; border-radius: var(--r-lg);
+  /* sidebar search + footer ------------------------------------------------ */
+  .side-search { padding: 0 12px 8px; }
+  .searchbar { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--r-lg);
     background: var(--input-bg); border: 0.5px solid var(--hairline); color: var(--text-3); font-size: 13px; transition: all .2s; }
   .searchbar:hover { border-color: var(--primary-line); color: var(--text-2); }
   .searchbar .material-symbols-outlined { font-size: 18px; }
   .searchbar .sb-hint { margin-left: auto; display: inline-flex; gap: 3px; }
+  .side-foot { border-top: 0.5px solid var(--hairline-soft); padding: 8px 12px 12px; }
+  .side-pages { display: flex; flex-direction: column; gap: 2px; }
 
   /* content + component blocks --------------------------------------------- */
-  .app-content { padding: 24px 40px 120px; max-width: 1000px; margin-left: auto; margin-right: auto; }
+  .app-content { padding: 40px 40px 120px; max-width: 1000px; margin-left: auto; margin-right: auto; }
   .group-title { scroll-margin-top: 80px; margin: 46px 0 6px; padding-top: 18px; border-top: 0.5px solid var(--hairline-soft); }
   .group-title:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
   .comp { scroll-margin-top: 80px; margin-top: 30px; }
@@ -120,6 +122,12 @@
   <div class="brand">
     <span class="mark"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">directions_car</span></span>
     <span class="text-headline-md">DriveSmart</span>
+  </div>
+  <div class="side-search">
+    <button class="searchbar" id="cmdkOpen">
+      <span class="material-symbols-outlined">search</span> Search…
+      <span class="sb-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
+    </button>
   </div>
   <div class="side-scroll">
     <nav id="sideNav">
@@ -204,24 +212,18 @@
       </div>
     </nav>
   </div>
-</aside>
-
-<!-- ── Topbar ──────────────────────────────────────────────────────────────── -->
-<header class="app-topbar glass-nav">
-  <nav class="flex items-center gap-4">
-    <a class="topnav-link active" href="index.html">Gallery</a>
-    <a class="topnav-link" href="docs.html?doc=brand">Brand&nbsp;guide</a>
-    <a class="topnav-link" href="docs.html?doc=design">Spec</a>
-  </nav>
-  <div class="ml-auto flex items-center gap-3">
-    <button class="searchbar" id="cmdkOpen">
-      <span class="material-symbols-outlined">search</span> Search components…
-      <span class="sb-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
-    </button>
-    <button class="btn btn--icon" id="themeToggle" title="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
-    <button class="btn btn--soft" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> CSS</button>
+  <div class="side-foot">
+    <div class="side-pages">
+      <a class="nav-link active" href="index.html"><span class="material-symbols-outlined">widgets</span><span class="lbl">Gallery</span></a>
+      <a class="nav-link" href="docs.html?doc=brand"><span class="material-symbols-outlined">palette</span><span class="lbl">Brand guide</span></a>
+      <a class="nav-link" href="docs.html?doc=design"><span class="material-symbols-outlined">description</span><span class="lbl">Spec</span></a>
+    </div>
+    <div class="flex items-center gap-2" style="padding:8px 2px 0">
+      <button class="btn btn--soft btn--sm flex-1" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> Copy CSS</button>
+      <button class="btn btn--icon" id="themeToggle" title="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+    </div>
   </div>
-</header>
+</aside>
 
 <!-- ── Content ─────────────────────────────────────────────────────────────── -->
 <main class="app-content">
