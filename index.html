@@ -3,654 +3,789 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DriveSmart Design System — Gallery</title>
+<title>DriveSmart · Design System</title>
 <meta name="description" content="Live component gallery for the DriveSmart design system — dark glassmorphism, vanilla CSS, zero framework.">
 <link rel="stylesheet" href="drivesmart.css">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script>window.Prism = { manual: true };</script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <style>
-  /* ── gallery chrome (not part of the system — just lays out this page) ────── */
+  /* ── gallery chrome (not part of the system — lays out this page) ────────── */
   html { scroll-behavior: smooth; }
-  body { padding-left: 252px; }
+  body { padding-left: 268px; }
 
-  .app-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 252px; z-index: 20; display: flex; flex-direction: column; }
-  .app-sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 14px; }
+  /* sidebar ---------------------------------------------------------------- */
+  .app-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 268px; z-index: 20; display: flex; flex-direction: column; }
+  .app-sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; }
   .app-sidebar .brand .mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--r-lg); background: linear-gradient(to bottom right, var(--primary), var(--primary-container)); }
   .app-sidebar .brand .mark .material-symbols-outlined { color: var(--surface-lowest); font-size: 19px; }
-  .app-sidebar nav { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; flex: 1; overflow-y: auto; }
-  .app-sidebar .sidenav-link { cursor: pointer; }
+  .app-sidebar .side-scroll { flex: 1; overflow-y: auto; padding: 6px 12px 18px; }
+  .nav-group { margin-top: 16px; }
+  .nav-group:first-child { margin-top: 4px; }
+  .nav-group-label { padding: 6px 12px 4px; font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-4); }
+  .nav-link { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: var(--r-lg); cursor: pointer;
+    font-family: var(--f-mono); font-size: 11px; letter-spacing: .03em; color: var(--text-2); border: 0.5px solid transparent; transition: all .15s; }
+  .nav-link:hover { background: var(--fill-1); color: var(--text-1); }
+  .nav-link.active { background: radial-gradient(140% 120% at 0% 50%, var(--primary-ghost), transparent 64%), var(--fill-1); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 16%, transparent); }
+  .nav-link .material-symbols-outlined { font-size: 16px; opacity: .8; }
 
-  .app-topbar { position: sticky; top: 0; z-index: 10; min-height: 60px; display: flex; align-items: center; gap: 16px; padding: 10px 26px; flex-wrap: wrap; }
-  .app-content { padding: 26px 30px 90px; max-width: 1140px; }
+  /* topbar ----------------------------------------------------------------- */
+  .app-topbar { position: sticky; top: 0; z-index: 10; min-height: 58px; display: flex; align-items: center; gap: 14px; padding: 10px 28px; }
+  .searchbar { display: inline-flex; align-items: center; gap: 8px; min-width: 280px; padding: 8px 12px; border-radius: var(--r-lg);
+    background: var(--input-bg); border: 0.5px solid var(--hairline); color: var(--text-3); font-size: 13px; transition: all .2s; }
+  .searchbar:hover { border-color: var(--primary-line); color: var(--text-2); }
+  .searchbar .material-symbols-outlined { font-size: 18px; }
+  .searchbar .sb-hint { margin-left: auto; display: inline-flex; gap: 3px; }
 
-  .gsection { margin-bottom: var(--gap-section); scroll-margin-top: 84px; }
-  .gsection > header { margin-bottom: 16px; }
-  .gsub { margin: 22px 0 10px; }
+  /* content + component blocks --------------------------------------------- */
+  .app-content { padding: 24px 36px 120px; max-width: 980px; }
+  .group-title { scroll-margin-top: 80px; margin: 46px 0 6px; padding-top: 18px; border-top: 0.5px solid var(--hairline-soft); }
+  .group-title:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
+  .comp { scroll-margin-top: 80px; margin-top: 30px; }
+  .comp-head h3 { font-family: var(--f-display); font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+  .comp-desc { color: var(--text-2); font-size: 13px; margin-top: 5px; max-width: 72ch; }
+  .comp-preview { padding: 30px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
+  .comp-preview.block { display: block; }
+  .comp-code { margin-top: 12px; border-radius: var(--r-xl); overflow: hidden; border: 0.5px solid var(--glass-border);
+    background: color-mix(in srgb, var(--surface-low) 86%, transparent); }
+  .comp-code-bar { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px 7px 14px; border-bottom: 0.5px solid var(--hairline-soft); }
+  .comp-code-bar .lang { font-family: var(--f-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
+  .comp-code pre { margin: 0; padding: 15px 16px; overflow-x: auto; background: none; }
+  .comp-code code { font-family: var(--f-mono); font-size: 12.5px; line-height: 1.7; white-space: pre; }
 
-  /* demo card: preview + toolbar + (toggle) code */
-  .demo { overflow: hidden; }
-  .demo + .demo { margin-top: 16px; }
-  .demo-preview { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 24px; }
-  .demo-preview.block { display: block; }
-  .demo-bar { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-top: 0.5px solid var(--hairline-soft); }
-  .demo-bar .name { font-family: var(--f-mono); font-size: 11px; color: var(--text-3); letter-spacing: .04em; }
-  .demo-code { display: none; border-top: 0.5px solid var(--hairline-soft); }
-  .demo.open .demo-code { display: block; }
-  .demo-code pre { margin: 0; padding: 16px 18px; overflow-x: auto; }
-  .demo-code code { font-family: var(--f-mono); font-size: 12px; line-height: 1.65; color: var(--text-2); white-space: pre; }
-
-  /* swatches */
-  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 24px; }
+  /* swatches + radius demo ------------------------------------------------- */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 26px; }
   .swatch { border-radius: var(--r-lg); border: 0.5px solid var(--hairline); overflow: hidden; }
-  .swatch .chip { height: 56px; }
+  .swatch .chip { height: 54px; }
   .swatch .meta { padding: 8px 10px; background: var(--surface-low); }
   .swatch .meta .nm { font-family: var(--f-mono); font-size: 11px; color: var(--text-1); }
   .swatch .meta .vv { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); }
+  .rad-demo { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .rad-box { width: 78px; height: 78px; background: var(--primary-ghost); border: 0.5px solid var(--primary-line); }
 
-  /* a relative stage so position:fixed overlays can be shown statically */
-  .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 50%, transparent); }
-
+  .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 45%, transparent); width: 100%; }
+  .copy-code { cursor: pointer; }
   .copied { color: var(--success) !important; }
 
-  /* .modal-overlay declares display:grid, which beats the system's .hidden
-     (same specificity, defined later) — force hidden to win for the live overlays */
-  .modal-overlay.hidden, .drawer.hidden, .drawer-overlay.hidden { display: none !important; }
+  /* command palette -------------------------------------------------------- */
+  .cmdk-overlay { position: fixed; inset: 0; z-index: 300; display: grid; place-items: start center; padding-top: 14vh;
+    background: rgba(5,8,12,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: ds-fade .15s ease; }
+  .cmdk { width: 100%; max-width: 560px; border-radius: var(--r-2xl); overflow: hidden;
+    background: var(--float-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 0.5px solid var(--glass-border-hi); box-shadow: 0 24px 60px rgba(0,0,0,.6); animation: ds-rise .2s cubic-bezier(.4,0,.2,1); }
+  .cmdk-input { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 0.5px solid var(--hairline); }
+  .cmdk-input .material-symbols-outlined { color: var(--text-3); }
+  .cmdk-input input { flex: 1; background: none; border: none; outline: none; color: var(--text-1); font-size: 15px; font-family: var(--f-body); }
+  .cmdk-list { max-height: 56vh; overflow-y: auto; padding: 8px; }
+  .cmdk-group-label { padding: 10px 12px 5px; font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); }
+  .cmdk-item { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: var(--r-lg); cursor: pointer; color: var(--text-1); font-size: 13px; }
+  .cmdk-item .material-symbols-outlined { font-size: 18px; color: var(--text-3); }
+  .cmdk-item .cmdk-grp { margin-left: auto; font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .04em; }
+  .cmdk-item.active, .cmdk-item:hover { background: var(--primary-ghost); color: var(--primary); }
+  .cmdk-item.active .material-symbols-outlined { color: var(--primary); }
+  .cmdk-empty { padding: 28px; text-align: center; color: var(--text-3); font-size: 13px; }
+
+  .modal-overlay.hidden, .drawer.hidden, .drawer-overlay.hidden, .cmdk-overlay.hidden { display: none !important; }
+
+  /* Prism syntax highlighting → mapped to design tokens (flips with theme) -- */
+  code[class*="language-"], pre[class*="language-"] { color: var(--text-2); text-shadow: none; background: none; }
+  .token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--text-4); font-style: italic; }
+  .token.punctuation { color: var(--text-3); }
+  .token.tag, .token.keyword, .token.selector, .token.important, .token.atrule { color: var(--primary); }
+  .token.attr-name, .token.property, .token.class-name { color: var(--idle); }
+  .token.attr-value, .token.string, .token.char, .token.regex { color: var(--success); }
+  .token.number, .token.boolean, .token.constant, .token.symbol { color: var(--warning); }
+  .token.operator, .token.entity, .token.url { color: var(--text-2); }
+  .token.function { color: var(--primary); }
+
+  @media (max-width: 860px) { body { padding-left: 0; } .app-sidebar { display: none; } .app-content { padding: 20px 18px 80px; } }
 </style>
 </head>
 <body class="bg-grid-pattern">
 <div class="aurora-bg"></div>
 
-<!-- ── Sidebar nav ─────────────────────────────────────────────────────────── -->
+<!-- ── Sidebar (grouped nav) ───────────────────────────────────────────────── -->
 <aside class="app-sidebar glass-sidebar">
   <div class="brand">
     <span class="mark"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">directions_car</span></span>
     <span class="text-headline-md">DriveSmart</span>
   </div>
-  <nav>
-    <a class="sidenav-link active" href="#foundations"><span class="material-symbols-outlined">palette</span> Foundations</a>
-    <a class="sidenav-link" href="#buttons"><span class="material-symbols-outlined">smart_button</span> Buttons</a>
-    <a class="sidenav-link" href="#surfaces"><span class="material-symbols-outlined">dashboard</span> Surfaces &amp; KPI</a>
-    <a class="sidenav-link" href="#status"><span class="material-symbols-outlined">label</span> Status &amp; Tags</a>
-    <a class="sidenav-link" href="#forms"><span class="material-symbols-outlined">edit_note</span> Forms</a>
-    <a class="sidenav-link" href="#data"><span class="material-symbols-outlined">table</span> Data display</a>
-    <a class="sidenav-link" href="#nav"><span class="material-symbols-outlined">menu</span> Navigation</a>
-    <a class="sidenav-link" href="#overlays"><span class="material-symbols-outlined">layers</span> Overlays</a>
-    <a class="sidenav-link" href="#feedback"><span class="material-symbols-outlined">notifications</span> Feedback</a>
-    <a class="sidenav-link" href="#viz"><span class="material-symbols-outlined">monitoring</span> Data viz</a>
-  </nav>
-  <div style="padding:12px 16px;border-top:0.5px solid var(--hairline-soft)">
-    <a class="sidenav-link" href="https://github.com/DriveSmart-Tech/drivesmart-design" target="_blank" rel="noopener"><span class="material-symbols-outlined">code</span> Source</a>
+  <div class="side-scroll">
+    <nav id="sideNav">
+      <div class="nav-group">
+        <div class="nav-group-label">Foundations</div>
+        <a class="nav-link" href="#colors"><span class="material-symbols-outlined">palette</span><span class="lbl">Colors</span></a>
+        <a class="nav-link" href="#typography"><span class="material-symbols-outlined">text_fields</span><span class="lbl">Typography</span></a>
+        <a class="nav-link" href="#radius"><span class="material-symbols-outlined">rounded_corner</span><span class="lbl">Radius</span></a>
+        <a class="nav-link" href="#elevation"><span class="material-symbols-outlined">layers</span><span class="lbl">Elevation</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Actions</div>
+        <a class="nav-link" href="#buttons"><span class="material-symbols-outlined">smart_button</span><span class="lbl">Buttons</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Surfaces</div>
+        <a class="nav-link" href="#cards"><span class="material-symbols-outlined">dashboard</span><span class="lbl">Glass cards</span></a>
+        <a class="nav-link" href="#kpi"><span class="material-symbols-outlined">monitoring</span><span class="lbl">KPI / Metric</span></a>
+        <a class="nav-link" href="#mesh"><span class="material-symbols-outlined">gradient</span><span class="lbl">Mesh tints</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Status &amp; tags</div>
+        <a class="nav-link" href="#status-chips"><span class="material-symbols-outlined">label</span><span class="lbl">Status chips</span></a>
+        <a class="nav-link" href="#badges"><span class="material-symbols-outlined">counter_1</span><span class="lbl">Badges</span></a>
+        <a class="nav-link" href="#tags"><span class="material-symbols-outlined">sell</span><span class="lbl">Tags</span></a>
+        <a class="nav-link" href="#dealer-pills"><span class="material-symbols-outlined">filter_alt</span><span class="lbl">Dealer pills</span></a>
+        <a class="nav-link" href="#dots"><span class="material-symbols-outlined">fiber_manual_record</span><span class="lbl">Dots</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Forms</div>
+        <a class="nav-link" href="#inputs"><span class="material-symbols-outlined">edit</span><span class="lbl">Inputs &amp; select</span></a>
+        <a class="nav-link" href="#textarea"><span class="material-symbols-outlined">notes</span><span class="lbl">Textarea</span></a>
+        <a class="nav-link" href="#field"><span class="material-symbols-outlined">view_agenda</span><span class="lbl">Field group</span></a>
+        <a class="nav-link" href="#input-group"><span class="material-symbols-outlined">attach_money</span><span class="lbl">Input group</span></a>
+        <a class="nav-link" href="#toggles"><span class="material-symbols-outlined">toggle_on</span><span class="lbl">Switch / check / radio</span></a>
+        <a class="nav-link" href="#range"><span class="material-symbols-outlined">tune</span><span class="lbl">Range</span></a>
+        <a class="nav-link" href="#search"><span class="material-symbols-outlined">search</span><span class="lbl">Search field</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Data display</div>
+        <a class="nav-link" href="#avatars"><span class="material-symbols-outlined">account_circle</span><span class="lbl">Avatars</span></a>
+        <a class="nav-link" href="#kv"><span class="material-symbols-outlined">list_alt</span><span class="lbl">Key-value</span></a>
+        <a class="nav-link" href="#progress"><span class="material-symbols-outlined">linear_scale</span><span class="lbl">Progress</span></a>
+        <a class="nav-link" href="#delta"><span class="material-symbols-outlined">trending_up</span><span class="lbl">Delta</span></a>
+        <a class="nav-link" href="#table"><span class="material-symbols-outlined">table</span><span class="lbl">Data table</span></a>
+        <a class="nav-link" href="#pagination"><span class="material-symbols-outlined">more_horiz</span><span class="lbl">Pagination</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Navigation</div>
+        <a class="nav-link" href="#breadcrumbs"><span class="material-symbols-outlined">chevron_right</span><span class="lbl">Breadcrumbs</span></a>
+        <a class="nav-link" href="#tabs"><span class="material-symbols-outlined">tab</span><span class="lbl">Tabs</span></a>
+        <a class="nav-link" href="#segmented"><span class="material-symbols-outlined">view_week</span><span class="lbl">Segmented</span></a>
+        <a class="nav-link" href="#sidenav"><span class="material-symbols-outlined">side_navigation</span><span class="lbl">Sidenav</span></a>
+        <a class="nav-link" href="#topnav"><span class="material-symbols-outlined">top_panel_open</span><span class="lbl">Topnav</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Overlays</div>
+        <a class="nav-link" href="#menu"><span class="material-symbols-outlined">menu_open</span><span class="lbl">Menu</span></a>
+        <a class="nav-link" href="#modal"><span class="material-symbols-outlined">open_in_full</span><span class="lbl">Modal</span></a>
+        <a class="nav-link" href="#drawer"><span class="material-symbols-outlined">dock_to_left</span><span class="lbl">Drawer</span></a>
+        <a class="nav-link" href="#popover"><span class="material-symbols-outlined">chat_bubble</span><span class="lbl">Popover</span></a>
+        <a class="nav-link" href="#tooltip"><span class="material-symbols-outlined">help</span><span class="lbl">Tooltip</span></a>
+        <a class="nav-link" href="#accordion"><span class="material-symbols-outlined">expand</span><span class="lbl">Accordion</span></a>
+        <a class="nav-link" href="#kbd"><span class="material-symbols-outlined">keyboard</span><span class="lbl">Keycap</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Feedback</div>
+        <a class="nav-link" href="#alert"><span class="material-symbols-outlined">info</span><span class="lbl">Alert</span></a>
+        <a class="nav-link" href="#banner"><span class="material-symbols-outlined">campaign</span><span class="lbl">Banner</span></a>
+        <a class="nav-link" href="#toast"><span class="material-symbols-outlined">notifications</span><span class="lbl">Toast</span></a>
+        <a class="nav-link" href="#skeleton"><span class="material-symbols-outlined">view_day</span><span class="lbl">Skeleton</span></a>
+        <a class="nav-link" href="#spinner"><span class="material-symbols-outlined">progress_activity</span><span class="lbl">Spinner</span></a>
+        <a class="nav-link" href="#empty"><span class="material-symbols-outlined">inbox</span><span class="lbl">Empty state</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Data viz</div>
+        <a class="nav-link" href="#charts"><span class="material-symbols-outlined">pie_chart</span><span class="lbl">Charts</span></a>
+      </div>
+    </nav>
   </div>
 </aside>
 
-<!-- ── Topbar (controls) ───────────────────────────────────────────────────── -->
+<!-- ── Topbar ──────────────────────────────────────────────────────────────── -->
 <header class="app-topbar glass-nav">
-  <div class="flex items-center gap-2">
-    <span class="dot dot--live"></span>
-    <span class="eyebrow">Design System · v1.0</span>
-  </div>
-  <div class="ml-auto flex items-center gap-3 flex-wrap">
-    <div class="flex items-center gap-2">
-      <span class="label-caps text-3">Theme</span>
-      <div class="segmented" id="themeSeg">
-        <button class="seg active" data-theme="dark">Dark</button>
-        <button class="seg" data-theme="light">Light</button>
-      </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <span class="label-caps text-3">Radius</span>
-      <div class="segmented" id="radiusSeg">
-        <button class="seg" data-radius="sharp">Sharp</button>
-        <button class="seg active" data-radius="">Medium</button>
-        <button class="seg" data-radius="round">Round</button>
-      </div>
-    </div>
-    <button class="btn btn--soft" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> Copy full CSS</button>
+  <div class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Design System · v1.0</span></div>
+  <div class="ml-auto flex items-center gap-3">
+    <button class="searchbar" id="cmdkOpen">
+      <span class="material-symbols-outlined">search</span> Search components…
+      <span class="sb-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
+    </button>
+    <button class="btn btn--icon" id="themeToggle" title="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+    <button class="btn btn--soft" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> CSS</button>
   </div>
 </header>
 
 <!-- ── Content ─────────────────────────────────────────────────────────────── -->
 <main class="app-content">
 
-  <!-- Hero -->
-  <div class="mb-section reveal">
+  <div style="margin:6px 0 8px">
     <span class="eyebrow">DriveSmart</span>
     <h1 class="text-display mt-2">Design System</h1>
-    <p class="text-2 mt-3" style="max-width:64ch">Dark glassmorphism · DriveSmart-blue accent · zero build, zero framework. One <code class="text-mono text-1">drivesmart.css</code> carries the tokens, utilities, and every component below. Toggle theme &amp; roundness above — the whole UI re-derives from a handful of base hexes. Hit <span class="text-1">Show code</span> on any demo to copy the markup.</p>
+    <p class="text-2 mt-3" style="max-width:64ch">Dark glassmorphism · DriveSmart-blue accent · zero build, zero framework. One <code class="text-mono text-1">drivesmart.css</code> carries the tokens, utilities, and every component below. Press <span class="kbd">⌘</span><span class="kbd">K</span> to jump anywhere.</p>
     <div class="flex gap-2 mt-4 flex-wrap">
-      <span class="badge">vanilla CSS</span>
-      <span class="badge badge--neutral">no React</span>
-      <span class="badge badge--neutral">no Tailwind</span>
-      <span class="badge badge--neutral">no build</span>
-      <span class="badge badge--success">light + dark</span>
+      <span class="badge">vanilla CSS</span><span class="badge badge--neutral">no React</span><span class="badge badge--neutral">no Tailwind</span><span class="badge badge--neutral">no build</span><span class="badge badge--success">light + dark</span>
     </div>
   </div>
 
-  <!-- ════ FOUNDATIONS ════ -->
-  <section class="gsection" id="foundations">
-    <header class="panel-head"><h2 class="text-headline-lg">Foundations</h2><span class="eyebrow">tokens</span></header>
+  <!-- ══════════ FOUNDATIONS ══════════ -->
+  <h2 class="group-title text-headline-lg">Foundations</h2>
 
-    <h3 class="text-headline-md gsub">Surfaces — elevation ladder</h3>
-    <div class="glass-card is-static">
-      <div class="swatch-grid">
-        <div class="swatch"><div class="chip" style="background:var(--surface-lowest)"></div><div class="meta"><div class="nm">surface-lowest</div><div class="vv">#0a0e14</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--surface)"></div><div class="meta"><div class="nm">surface</div><div class="vv">#0f1419</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--surface-low)"></div><div class="meta"><div class="nm">surface-low</div><div class="vv">#181c22</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--surface-container)"></div><div class="meta"><div class="nm">surface-container</div><div class="vv">#1c2026</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--surface-high)"></div><div class="meta"><div class="nm">surface-high</div><div class="vv">#262a30</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--surface-variant)"></div><div class="meta"><div class="nm">surface-variant</div><div class="vv">#31353b</div></div></div>
-      </div>
+  <article class="comp" id="colors">
+    <div class="comp-head"><h3>Colors</h3><p class="comp-desc">Every colour is a <code class="text-mono">:root</code> variable. Ghosts, borders and glows derive from the base hue via <code class="text-mono">color-mix</code> — change one hex, it flows everywhere.</p></div>
+    <div class="glass-card is-static"><div class="swatch-grid">
+      <div class="swatch"><div class="chip" style="background:var(--surface-lowest)"></div><div class="meta"><div class="nm">surface-lowest</div><div class="vv">page canvas</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-container)"></div><div class="meta"><div class="nm">surface-container</div><div class="vv">raised</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--surface-high)"></div><div class="meta"><div class="nm">surface-high</div><div class="vv">highest</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><div class="nm">primary</div><div class="vv">the one accent</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--success)"></div><div class="meta"><div class="nm">success</div><div class="vv">paid</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--danger)"></div><div class="meta"><div class="nm">danger</div><div class="vv">unpaid</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--warning)"></div><div class="meta"><div class="nm">warning</div><div class="vv">pending</div></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--idle)"></div><div class="meta"><div class="nm">idle</div><div class="vv">dead deal</div></div></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">css</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-css">background: var(--surface-container);
+color: var(--primary);
+border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></pre></div>
+  </article>
+
+  <article class="comp" id="typography">
+    <div class="comp-head"><h3>Typography</h3><p class="comp-desc">Hanken Grotesk (display) · Inter (body) · Geist (mono caps for labels &amp; data).</p></div>
+    <div class="glass-card is-static comp-preview block">
+      <p class="text-display">Display 40</p>
+      <p class="text-headline-lg mt-3">Headline LG 28</p>
+      <p class="text-headline-md mt-3">Headline MD 20</p>
+      <p class="text-body mt-3">Body 14 — Inter. The quick brown fox jumps over 1,234 lazy dogs.</p>
+      <p class="text-sm text-2 mt-2">Small 13 secondary text.</p>
+      <p class="label-caps text-3 mt-3">Label · caps · mono eyebrow</p>
+      <p class="num text-1 mt-2" style="font-size:20px">$ 1,284,907.50</p>
     </div>
-
-    <h3 class="text-headline-md gsub">Accent &amp; status</h3>
-    <div class="glass-card is-static">
-      <div class="swatch-grid">
-        <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><div class="nm">primary</div><div class="vv">the one accent</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--primary-container)"></div><div class="meta"><div class="nm">primary-container</div><div class="vv">gradient end</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--success)"></div><div class="meta"><div class="nm">success</div><div class="vv">paid / positive</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--danger)"></div><div class="meta"><div class="nm">danger</div><div class="vv">unpaid / error</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--warning)"></div><div class="meta"><div class="nm">warning</div><div class="vv">pending</div></div></div>
-        <div class="swatch"><div class="chip" style="background:var(--idle)"></div><div class="meta"><div class="nm">idle</div><div class="vv">dead deal / draft</div></div></div>
-      </div>
-    </div>
-
-    <h3 class="text-headline-md gsub">Typography</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <p class="text-display">Display 40 · Hanken</p>
-        <p class="text-headline-lg mt-3">Headline LG 28</p>
-        <p class="text-headline-md mt-3">Headline MD 20</p>
-        <p class="text-body mt-3">Body 14 — Inter. The quick brown fox jumps over 1,234 lazy dogs.</p>
-        <p class="text-sm text-2 mt-2">Small 13 secondary text.</p>
-        <p class="label-caps text-3 mt-3">Label · caps · mono eyebrow</p>
-        <p class="num text-1 mt-2" style="font-size:20px">$ 1,284,907.50</p>
-      </div>
-      <div class="demo-bar"><span class="name">type scale</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;p class="text-display"&gt;Display 40&lt;/p&gt;
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;p class="text-display"&gt;Display 40&lt;/p&gt;
 &lt;p class="text-headline-lg"&gt;Headline LG 28&lt;/p&gt;
-&lt;p class="text-headline-md"&gt;Headline MD 20&lt;/p&gt;
-&lt;p class="text-body"&gt;Body 14 — Inter&lt;/p&gt;
 &lt;p class="label-caps text-3"&gt;Label · caps · mono eyebrow&lt;/p&gt;
 &lt;p class="num"&gt;$ 1,284,907.50&lt;/p&gt;</code></pre></div>
-    </div>
-  </section>
+  </article>
 
-  <!-- ════ BUTTONS ════ -->
-  <section class="gsection" id="buttons">
-    <header class="panel-head"><h2 class="text-headline-lg">Buttons</h2><span class="eyebrow">btn</span></header>
-
-    <h3 class="text-headline-md gsub">Variants — one loud CTA</h3>
-    <div class="demo glass-card is-static">
-      <div class="demo-preview">
-        <button class="btn btn--primary"><span class="material-symbols-outlined">sync</span> Primary</button>
-        <button class="btn btn--soft">Soft</button>
-        <button class="btn">Default</button>
-        <button class="btn btn--ghost">Ghost</button>
-        <button class="btn btn--icon"><span class="material-symbols-outlined">more_horiz</span></button>
-        <button class="btn btn--primary" disabled>Disabled</button>
-      </div>
-      <div class="demo-bar"><span class="name">btn--primary / --soft / (default) / --ghost / --icon</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code></code></pre></div>
-    </div>
-
-    <h3 class="text-headline-md gsub">Sizes</h3>
-    <div class="demo glass-card is-static">
-      <div class="demo-preview">
-        <button class="btn btn--primary btn--xs">XS</button>
-        <button class="btn btn--primary btn--sm">SM</button>
-        <button class="btn btn--primary">Default</button>
-        <button class="btn btn--primary btn--lg">Large</button>
-      </div>
-      <div class="demo-bar"><span class="name">btn--xs / --sm / (default) / --lg</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code></code></pre></div>
-    </div>
-  </section>
-
-  <!-- ════ SURFACES & KPI ════ -->
-  <section class="gsection" id="surfaces">
-    <header class="panel-head"><h2 class="text-headline-lg">Surfaces &amp; KPI</h2><span class="eyebrow">glass-card</span></header>
-
-    <h3 class="text-headline-md gsub">KPI tiles — a KPI is just a card</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="grid grid-4 gap-card">
-          <div class="glass-card card-mesh-primary p-5"><div class="metric text-primary" data-count="40231">0</div><div class="label-caps text-2 mt-2">Contracts</div></div>
-          <div class="glass-card card-mesh-success p-5"><div class="metric text-success" data-count="12847">0</div><div class="label-caps text-2 mt-2">Paid <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span>8%</span></div></div>
-          <div class="glass-card card-mesh-danger p-5"><div class="metric text-danger" data-count="3109">0</div><div class="label-caps text-2 mt-2">Unpaid</div></div>
-          <div class="glass-card card-mesh-warning p-5"><div class="metric text-warning" data-count="842">0</div><div class="label-caps text-2 mt-2">Pending</div></div>
+  <article class="comp" id="radius">
+    <div class="comp-head"><h3>Radius</h3><p class="comp-desc">Five radius tokens. Set <code class="text-mono">data-radius="sharp|round"</code> on <code class="text-mono">&lt;html&gt;</code> to re-round the entire UI — try the scale switch below and watch every component change.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-sm)"></div><span class="label-caps text-3">r-sm</span></div>
+      <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-lg)"></div><span class="label-caps text-3">r-lg</span></div>
+      <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-xl)"></div><span class="label-caps text-3">r-xl</span></div>
+      <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-2xl)"></div><span class="label-caps text-3">r-2xl</span></div>
+      <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-full)"></div><span class="label-caps text-3">r-full</span></div>
+      <div class="rad-demo" style="margin-left:auto">
+        <span class="label-caps text-3">Global scale</span>
+        <div class="segmented" id="radiusSeg">
+          <button class="seg" data-radius="sharp">Sharp</button><button class="seg active" data-radius="">Medium</button><button class="seg" data-radius="round">Round</button>
         </div>
       </div>
-      <div class="demo-bar"><span class="name">glass-card + card-mesh-* + metric + label-caps</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="glass-card card-mesh-success p-5"&gt;
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;html data-radius="round"&gt;   &lt;!-- sharp | (default) | round --&gt;
+&lt;div style="border-radius: var(--r-lg)"&gt;…&lt;/div&gt;
+&lt;!-- utilities: .rounded .rounded-lg .rounded-xl .rounded-2xl .rounded-full --&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="elevation">
+    <div class="comp-head"><h3>Elevation</h3><p class="comp-desc">Glass surfaces lift on hover (blue glow). Add <code class="text-mono">.is-static</code> to opt out.</p></div>
+    <div class="comp-preview">
+      <div class="glass-card p-6" style="width:220px"><span class="label-caps text-2">glass-card</span><p class="text-sm text-3 mt-2">Hover me — lifts</p></div>
+      <div class="glass-card is-static p-6" style="width:220px"><span class="label-caps text-2">.is-static</span><p class="text-sm text-3 mt-2">No hover lift</p></div>
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
+
+  <!-- ══════════ ACTIONS ══════════ -->
+  <h2 class="group-title text-headline-lg">Actions</h2>
+
+  <article class="comp" id="buttons">
+    <div class="comp-head"><h3>Buttons</h3><p class="comp-desc">One loud CTA — only <code class="text-mono">.btn--primary</code> carries the blue gradient. Sizes xs · sm · default · lg.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <button class="btn btn--primary"><span class="material-symbols-outlined">sync</span> Primary</button>
+      <button class="btn btn--soft">Soft</button>
+      <button class="btn">Default</button>
+      <button class="btn btn--ghost">Ghost</button>
+      <button class="btn btn--icon"><span class="material-symbols-outlined">more_horiz</span></button>
+      <button class="btn btn--primary" disabled>Disabled</button>
+    </div>
+    <div class="glass-card is-static comp-preview">
+      <button class="btn btn--primary btn--xs">XS</button>
+      <button class="btn btn--primary btn--sm">SM</button>
+      <button class="btn btn--primary">Default</button>
+      <button class="btn btn--primary btn--lg">Large</button>
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
+
+  <!-- ══════════ SURFACES ══════════ -->
+  <h2 class="group-title text-headline-lg">Surfaces</h2>
+
+  <article class="comp" id="cards">
+    <div class="comp-head"><h3>Glass cards</h3><p class="comp-desc">Translucent, blurred, hairline border, lit top edge. The base surface for everything.</p></div>
+    <div class="comp-preview block"><div class="grid grid-3 gap-card">
+      <div class="glass-card p-6"><span class="label-caps text-2">Card</span><p class="text-sm text-3 mt-2">Plain glass surface.</p></div>
+      <div class="glass-card p-6"><span class="label-caps text-2">Card</span><p class="text-sm text-3 mt-2">Lifts on hover.</p></div>
+      <div class="glass-card p-6"><span class="label-caps text-2">Card</span><p class="text-sm text-3 mt-2">Blue glow shadow.</p></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card p-6"&gt;…&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="kpi">
+    <div class="comp-head"><h3>KPI / Metric</h3><p class="comp-desc">A KPI isn't its own component — it's a card. Compose <code class="text-mono">glass-card</code> + <code class="text-mono">card-mesh-*</code> + <code class="text-mono">metric</code> + <code class="text-mono">label-caps</code>. <code class="text-mono">count-up.js</code> animates <code class="text-mono">[data-count]</code>.</p></div>
+    <div class="comp-preview block"><div class="grid grid-4 gap-card">
+      <div class="glass-card card-mesh-primary p-5"><div class="metric text-primary" data-count="40231">0</div><div class="label-caps text-2 mt-2">Contracts</div></div>
+      <div class="glass-card card-mesh-success p-5"><div class="metric text-success" data-count="12847">0</div><div class="label-caps text-2 mt-2">Paid <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span>8%</span></div></div>
+      <div class="glass-card card-mesh-danger p-5"><div class="metric text-danger" data-count="3109">0</div><div class="label-caps text-2 mt-2">Unpaid</div></div>
+      <div class="glass-card card-mesh-warning p-5"><div class="metric text-warning" data-count="842">0</div><div class="label-caps text-2 mt-2">Pending</div></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card card-mesh-success p-5"&gt;
   &lt;div class="metric text-success" data-count="12847"&gt;0&lt;/div&gt;
-  &lt;div class="label-caps text-2 mt-2"&gt;
-    Paid &lt;span class="delta delta--up"&gt;
-      &lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt;8%&lt;/span&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;!-- count-up.js animates [data-count] on scroll-into-view --&gt;</code></pre></div>
+  &lt;div class="label-caps text-2 mt-2"&gt;Paid&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="mesh">
+    <div class="comp-head"><h3>Mesh tints</h3><p class="comp-desc">A soft corner gradient over glass — token-driven, one per status hue.</p></div>
+    <div class="comp-preview block"><div class="grid grid-3 gap-card">
+      <div class="glass-card card-mesh-primary p-5"><span class="label-caps text-2">primary</span></div>
+      <div class="glass-card card-mesh-success p-5"><span class="label-caps text-2">success</span></div>
+      <div class="glass-card card-mesh-danger p-5"><span class="label-caps text-2">danger</span></div>
+      <div class="glass-card card-mesh-warning p-5"><span class="label-caps text-2">warning</span></div>
+      <div class="glass-card card-mesh-idle p-5"><span class="label-caps text-2">idle</span></div>
+      <div class="glass-card card-mesh-neutral p-5"><span class="label-caps text-2">neutral</span></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card card-mesh-primary p-5"&gt;…&lt;/div&gt;
+&lt;!-- card-mesh-{primary,success,danger,warning,idle,neutral} --&gt;</code></pre></div>
+  </article>
+
+  <!-- ══════════ STATUS & TAGS ══════════ -->
+  <h2 class="group-title text-headline-lg">Status &amp; tags</h2>
+
+  <article class="comp" id="status-chips">
+    <div class="comp-head"><h3>Status chips</h3><p class="comp-desc">Ghost fill + tinted border + soft glow. The dashboard's payment states.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="status-chip status-chip--paid">Paid</span>
+      <span class="status-chip status-chip--unpaid">Unpaid</span>
+      <span class="status-chip status-chip--pending">Pending</span>
+      <span class="status-chip status-chip--cancelled">Cancelled</span>
+      <span class="status-chip status-chip--dead">Dead deal</span>
     </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Mesh corner tints</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="grid grid-3 gap-card">
-          <div class="glass-card card-mesh-primary p-5"><span class="label-caps text-2">card-mesh-primary</span></div>
-          <div class="glass-card card-mesh-success p-5"><span class="label-caps text-2">card-mesh-success</span></div>
-          <div class="glass-card card-mesh-danger p-5"><span class="label-caps text-2">card-mesh-danger</span></div>
-          <div class="glass-card card-mesh-warning p-5"><span class="label-caps text-2">card-mesh-warning</span></div>
-          <div class="glass-card card-mesh-idle p-5"><span class="label-caps text-2">card-mesh-idle</span></div>
-          <div class="glass-card card-mesh-neutral p-5"><span class="label-caps text-2">card-mesh-neutral</span></div>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">card-mesh-{primary,success,danger,warning,idle,neutral}</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="glass-card card-mesh-primary p-5"&gt;…&lt;/div&gt;
-&lt;div class="glass-card card-mesh-success p-5"&gt;…&lt;/div&gt;
-&lt;div class="glass-card card-mesh-danger  p-5"&gt;…&lt;/div&gt;
-&lt;!-- also: -warning / -idle / -neutral. .is-static opts out of hover lift --&gt;</code></pre></div>
+  <article class="comp" id="badges">
+    <div class="comp-head"><h3>Badges</h3><p class="comp-desc">Count / label pills. Default blue, plus success / danger / neutral.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="badge">12</span><span class="badge badge--success">Active</span><span class="badge badge--danger">Overdue</span><span class="badge badge--neutral">Draft</span>
     </div>
-  </section>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-  <!-- ════ STATUS & TAGS ════ -->
-  <section class="gsection" id="status">
-    <header class="panel-head"><h2 class="text-headline-lg">Status &amp; Tags</h2><span class="eyebrow">chips · badges</span></header>
-
-    <h3 class="text-headline-md gsub">Status chips</h3>
-    <div class="demo glass-card is-static">
-      <div class="demo-preview">
-        <span class="status-chip status-chip--paid">Paid</span>
-        <span class="status-chip status-chip--unpaid">Unpaid</span>
-        <span class="status-chip status-chip--pending">Pending</span>
-        <span class="status-chip status-chip--cancelled">Cancelled</span>
-        <span class="status-chip status-chip--dead">Dead deal</span>
-      </div>
-      <div class="demo-bar"><span class="name">status-chip--{paid,unpaid,pending,cancelled,dead}</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code></code></pre></div>
+  <article class="comp" id="tags">
+    <div class="comp-head"><h3>Tags</h3><p class="comp-desc">Neutral chips for metadata.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="tag">v1.0</span><span class="tag">SUV</span><span class="tag">Finance</span>
     </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Badges · tags · dealer pills · dots</h3>
-    <div class="demo glass-card is-static">
-      <div class="demo-preview">
-        <span class="badge">12</span>
-        <span class="badge badge--success">Active</span>
-        <span class="badge badge--danger">Overdue</span>
-        <span class="badge badge--neutral">Draft</span>
-        <span class="tag">v1.0</span>
-        <span class="tag">SUV</span>
-        <span class="dealer-pill active">Northgate <span class="count">128</span></span>
-        <span class="dealer-pill">Summit <span class="count">86</span></span>
-        <span class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Live</span></span>
-      </div>
-      <div class="demo-bar"><span class="name">badge(+--success/--danger/--neutral) · tag · dealer-pill · dot--live</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code></code></pre></div>
+  <article class="comp" id="dealer-pills">
+    <div class="comp-head"><h3>Dealer pills</h3><p class="comp-desc">Glass filter chip with a count badge. Add <code class="text-mono">.active</code> for the selected state.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="dealer-pill active">Northgate <span class="count">128</span></span>
+      <span class="dealer-pill">Summit <span class="count">86</span></span>
+      <span class="dealer-pill">Coastline <span class="count">54</span></span>
     </div>
-  </section>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-  <!-- ════ FORMS ════ -->
-  <section class="gsection" id="forms">
-    <header class="panel-head"><h2 class="text-headline-lg">Forms</h2><span class="eyebrow">input · field</span></header>
+  <article class="comp" id="dots">
+    <div class="comp-head"><h3>Dots</h3><p class="comp-desc">Glowing status dot. Add <code class="text-mono">.animate-pulse</code> for a live ping.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Live</span></span>
+      <span class="flex items-center gap-2"><span class="dot dot--primary animate-pulse"></span><span class="eyebrow">Syncing</span></span>
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="grid grid-2 gap-5">
-          <div class="field">
-            <label class="field-label">Customer name <span class="req">*</span></label>
-            <input class="input" placeholder="Jane Rivera">
-            <span class="field-hint">As it appears on the contract.</span>
-          </div>
-          <div class="field is-invalid">
-            <label class="field-label">Email</label>
-            <input class="input" aria-invalid="true" value="not-an-email">
-            <span class="field-error"><span class="material-symbols-outlined">error</span> Enter a valid email.</span>
-          </div>
-          <div class="field">
-            <label class="field-label">Dealer</label>
-            <select class="select"><option>Northgate Auto</option><option>Summit Motors</option></select>
-          </div>
-          <div class="field">
-            <label class="field-label">Amount</label>
-            <div class="input-group"><span class="input-affix">$</span><input class="input" value="24,500"><span class="input-affix">USD</span></div>
-          </div>
-          <div class="field" style="grid-column:1/-1">
-            <label class="field-label">Notes</label>
-            <textarea class="textarea" placeholder="Add a note…"></textarea>
-          </div>
-          <div class="field">
-            <label class="field-label">Search</label>
-            <div class="search"><span class="material-symbols-outlined">search</span><input class="input" placeholder="Search contracts…"></div>
-          </div>
-          <div class="field">
-            <label class="field-label">Discount</label>
-            <input type="range" class="range" value="40">
-          </div>
-        </div>
-        <div class="flex items-center gap-5 flex-wrap mt-6">
-          <label class="flex items-center gap-2"><span class="switch"><input type="checkbox" checked><span class="track"></span></span> <span class="text-sm">Auto-sync</span></label>
-          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" checked> <span class="text-sm">Paid in full</span></label>
-          <label class="flex items-center gap-2"><input type="radio" name="r" class="radio" checked> <span class="text-sm">Monthly</span></label>
-          <label class="flex items-center gap-2"><input type="radio" name="r" class="radio"> <span class="text-sm">Annual</span></label>
-        </div>
-        <div class="flex items-center gap-3 mt-6">
-          <input class="input input--sm" placeholder="sm" style="max-width:120px">
-          <input class="input" placeholder="default" style="max-width:140px">
-          <input class="input input--lg" placeholder="lg" style="max-width:160px">
-        </div>
+  <!-- ══════════ FORMS ══════════ -->
+  <h2 class="group-title text-headline-lg">Forms</h2>
+
+  <article class="comp" id="inputs">
+    <div class="comp-head"><h3>Inputs &amp; select</h3><p class="comp-desc">Glass field, blue focus ring. Sizes <code class="text-mono">--sm</code> / default / <code class="text-mono">--lg</code> (same for select).</p></div>
+    <div class="glass-card is-static comp-preview block">
+      <div class="grid grid-3 gap-4">
+        <input class="input input--sm" placeholder="Small">
+        <input class="input" placeholder="Default">
+        <input class="input input--lg" placeholder="Large">
+        <select class="select"><option>Northgate Auto</option><option>Summit Motors</option></select>
+        <input class="input" value="Jane Rivera">
+        <input class="input" aria-invalid="true" value="invalid">
       </div>
-      <div class="demo-bar"><span class="name">field · input · select · textarea · input-group · switch · checkbox · radio · range · search</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="field"&gt;
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;input class="input" placeholder="Default"&gt;
+&lt;input class="input input--lg" placeholder="Large"&gt;
+&lt;select class="select"&gt;&lt;option&gt;Northgate Auto&lt;/option&gt;&lt;/select&gt;
+&lt;input class="input" aria-invalid="true"&gt;   &lt;!-- error ring --&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="textarea">
+    <div class="comp-head"><h3>Textarea</h3><p class="comp-desc">Vertically resizable glass field.</p></div>
+    <div class="glass-card is-static comp-preview block"><textarea class="textarea" placeholder="Add a note…"></textarea></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;textarea class="textarea" placeholder="Add a note…"&gt;&lt;/textarea&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="field">
+    <div class="comp-head"><h3>Field group</h3><p class="comp-desc">Label + control + hint / error. Set <code class="text-mono">aria-invalid</code> or <code class="text-mono">.is-invalid</code> for the error state.</p></div>
+    <div class="glass-card is-static comp-preview block"><div class="grid grid-2 gap-5">
+      <div class="field">
+        <label class="field-label">Customer name <span class="req">*</span></label>
+        <input class="input" placeholder="Jane Rivera">
+        <span class="field-hint">As it appears on the contract.</span>
+      </div>
+      <div class="field is-invalid">
+        <label class="field-label">Email</label>
+        <input class="input" aria-invalid="true" value="not-an-email">
+        <span class="field-error"><span class="material-symbols-outlined">error</span> Enter a valid email.</span>
+      </div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="field"&gt;
   &lt;label class="field-label"&gt;Customer name &lt;span class="req"&gt;*&lt;/span&gt;&lt;/label&gt;
-  &lt;input class="input" placeholder="Jane Rivera"&gt;
+  &lt;input class="input"&gt;
   &lt;span class="field-hint"&gt;As it appears on the contract.&lt;/span&gt;
-&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;!-- invalid: aria-invalid on control OR .is-invalid on .field --&gt;
-&lt;div class="field is-invalid"&gt;
-  &lt;input class="input" aria-invalid="true"&gt;
-  &lt;span class="field-error"&gt;&lt;span class="material-symbols-outlined"&gt;error&lt;/span&gt; Enter a valid email.&lt;/span&gt;
-&lt;/div&gt;
+  <article class="comp" id="input-group">
+    <div class="comp-head"><h3>Input group</h3><p class="comp-desc">Prefix / suffix affixes around an input.</p></div>
+    <div class="glass-card is-static comp-preview block" style="max-width:320px"><div class="input-group"><span class="input-affix">$</span><input class="input" value="24,500"><span class="input-affix">USD</span></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="input-group"&gt;
+  &lt;span class="input-affix"&gt;$&lt;/span&gt;
+  &lt;input class="input" value="24,500"&gt;
+  &lt;span class="input-affix"&gt;USD&lt;/span&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;div class="input-group"&gt;&lt;span class="input-affix"&gt;$&lt;/span&gt;&lt;input class="input"&gt;&lt;span class="input-affix"&gt;USD&lt;/span&gt;&lt;/div&gt;
-
-&lt;span class="switch"&gt;&lt;input type="checkbox" checked&gt;&lt;span class="track"&gt;&lt;/span&gt;&lt;/span&gt;
-&lt;input type="checkbox" class="checkbox"&gt;  &lt;input type="radio" class="radio"&gt;
-&lt;input type="range" class="range"&gt;
-&lt;div class="search"&gt;&lt;span class="material-symbols-outlined"&gt;search&lt;/span&gt;&lt;input class="input"&gt;&lt;/div&gt;
-&lt;!-- sizes: input--sm / input--lg (same for select--*) --&gt;</code></pre></div>
+  <article class="comp" id="toggles">
+    <div class="comp-head"><h3>Switch / checkbox / radio</h3><p class="comp-desc">Styled native controls.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <label class="flex items-center gap-2"><span class="switch"><input type="checkbox" checked><span class="track"></span></span> <span class="text-sm">Auto-sync</span></label>
+      <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" checked> <span class="text-sm">Paid in full</span></label>
+      <label class="flex items-center gap-2"><input type="radio" name="rr" class="radio" checked> <span class="text-sm">Monthly</span></label>
+      <label class="flex items-center gap-2"><input type="radio" name="rr" class="radio"> <span class="text-sm">Annual</span></label>
     </div>
-  </section>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="switch"&gt;&lt;input type="checkbox" checked&gt;&lt;span class="track"&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;input type="checkbox" class="checkbox"&gt;
+&lt;input type="radio" class="radio"&gt;</code></pre></div>
+  </article>
 
-  <!-- ════ DATA DISPLAY ════ -->
-  <section class="gsection" id="data">
-    <header class="panel-head"><h2 class="text-headline-lg">Data display</h2><span class="eyebrow">table · avatar · kv</span></header>
+  <article class="comp" id="range">
+    <div class="comp-head"><h3>Range</h3><p class="comp-desc">Glowing-thumb slider.</p></div>
+    <div class="glass-card is-static comp-preview block" style="max-width:360px"><input type="range" class="range" value="40"></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;input type="range" class="range" value="40"&gt;</code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Avatars</h3>
-    <div class="demo glass-card is-static">
-      <div class="demo-preview">
-        <span class="avatar avatar--blue">JR</span>
-        <span class="avatar avatar--green">KO</span>
-        <span class="avatar avatar--violet">LT</span>
-        <span class="avatar avatar--amber">MP</span>
-        <span class="avatar avatar--gray">DS</span>
-        <span class="avatar avatar--sm avatar--blue">S</span>
-        <span class="avatar avatar--lg avatar--green">L</span>
-        <span class="avatar-group"><span class="avatar avatar--blue">A</span><span class="avatar avatar--green">B</span><span class="avatar avatar--violet">C</span><span class="avatar avatar--gray">+5</span></span>
-      </div>
-      <div class="demo-bar"><span class="name">avatar(+--sm/--lg, tones --blue/green/violet/amber/gray, avatar-group)</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code></code></pre></div>
+  <article class="comp" id="search">
+    <div class="comp-head"><h3>Search field</h3><p class="comp-desc">Icon-prefixed input wrapper.</p></div>
+    <div class="glass-card is-static comp-preview block" style="max-width:360px"><div class="search"><span class="material-symbols-outlined">search</span><input class="input" placeholder="Search contracts…"></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="search"&gt;
+  &lt;span class="material-symbols-outlined"&gt;search&lt;/span&gt;
+  &lt;input class="input" placeholder="Search…"&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <!-- ══════════ DATA DISPLAY ══════════ -->
+  <h2 class="group-title text-headline-lg">Data display</h2>
+
+  <article class="comp" id="avatars">
+    <div class="comp-head"><h3>Avatars</h3><p class="comp-desc">Tones blue / green / violet / amber / gray · sizes sm / default / lg · stack with <code class="text-mono">avatar-group</code>.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="avatar avatar--blue">JR</span><span class="avatar avatar--green">KO</span><span class="avatar avatar--violet">LT</span><span class="avatar avatar--amber">MP</span><span class="avatar avatar--gray">DS</span>
+      <span class="avatar avatar--sm avatar--blue">S</span><span class="avatar avatar--lg avatar--green">L</span>
+      <span class="avatar-group"><span class="avatar avatar--blue">A</span><span class="avatar avatar--green">B</span><span class="avatar avatar--violet">C</span><span class="avatar avatar--gray">+5</span></span>
     </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Key-value · progress · delta</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <dl class="kv mb-6">
-          <div><dt class="k">Contract</dt><dd class="v num">#DS-40231</dd></div>
-          <div><dt class="k">Dealer</dt><dd class="v">Northgate Auto</dd></div>
-          <div><dt class="k">Amount</dt><dd class="v num">$24,500</dd></div>
-          <div><dt class="k">Status</dt><dd class="v"><span class="status-chip status-chip--paid">Paid</span></dd></div>
-        </dl>
-        <div class="flex flex-col gap-3" style="max-width:420px">
-          <div class="progress"><div class="progress-bar" style="width:72%"></div></div>
-          <div class="progress"><div class="progress-bar progress-bar--success" style="width:90%"></div></div>
-          <div class="progress"><div class="progress-bar progress-bar--danger" style="width:35%"></div></div>
-        </div>
-        <div class="flex items-center gap-4 mt-4">
-          <span class="num text-1" style="font-size:20px">$128,400</span>
-          <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span> 12.4%</span>
-          <span class="delta delta--down"><span class="material-symbols-outlined">trending_down</span> 3.1%</span>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">kv · progress(+--success/--danger) · delta--up/--down</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;dl class="kv"&gt;
+  <article class="comp" id="kv">
+    <div class="comp-head"><h3>Key-value</h3><p class="comp-desc">Description list — mono caps key, readable value.</p></div>
+    <div class="glass-card is-static comp-preview block"><dl class="kv">
+      <div><dt class="k">Contract</dt><dd class="v num">#DS-40231</dd></div>
+      <div><dt class="k">Dealer</dt><dd class="v">Northgate Auto</dd></div>
+      <div><dt class="k">Amount</dt><dd class="v num">$24,500</dd></div>
+      <div><dt class="k">Status</dt><dd class="v"><span class="status-chip status-chip--paid">Paid</span></dd></div>
+    </dl></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;dl class="kv"&gt;
   &lt;div&gt;&lt;dt class="k"&gt;Amount&lt;/dt&gt;&lt;dd class="v num"&gt;$24,500&lt;/dd&gt;&lt;/div&gt;
-&lt;/dl&gt;
+&lt;/dl&gt;</code></pre></div>
+  </article>
 
-&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width:72%"&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class="progress"&gt;&lt;div class="progress-bar progress-bar--success" style="width:90%"&gt;&lt;/div&gt;&lt;/div&gt;
+  <article class="comp" id="progress">
+    <div class="comp-head"><h3>Progress</h3><p class="comp-desc">Glowing meter — default blue, plus success / danger.</p></div>
+    <div class="glass-card is-static comp-preview block"><div class="flex flex-col gap-3" style="max-width:420px">
+      <div class="progress"><div class="progress-bar" style="width:72%"></div></div>
+      <div class="progress"><div class="progress-bar progress-bar--success" style="width:90%"></div></div>
+      <div class="progress"><div class="progress-bar progress-bar--danger" style="width:35%"></div></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width:72%"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="progress"&gt;&lt;div class="progress-bar progress-bar--success" style="width:90%"&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;span class="delta delta--up"&gt;&lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt; 12.4%&lt;/span&gt;</code></pre></div>
+  <article class="comp" id="delta">
+    <div class="comp-head"><h3>Delta</h3><p class="comp-desc">Trend indicator beside a number.</p></div>
+    <div class="glass-card is-static comp-preview">
+      <span class="num text-1" style="font-size:20px">$128,400</span>
+      <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span> 12.4%</span>
+      <span class="delta delta--down"><span class="material-symbols-outlined">trending_down</span> 3.1%</span>
     </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="delta delta--up"&gt;&lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt; 12.4%&lt;/span&gt;</code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Sortable glass table</h3>
-    <div class="demo glass-card is-static overflow-hidden" data-manual style="padding:0">
-      <div class="panel-head" style="padding:18px 20px;margin:0">
-        <h3 class="text-headline-md">Contracts</h3>
-        <div class="segmented">
-          <button class="seg active">All</button><button class="seg">Paid</button><button class="seg">Unpaid</button>
-        </div>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="data-table" id="demoTable">
-          <thead><tr>
-            <th class="sortable" data-key="dealer">Dealer <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
-            <th>Customer</th>
-            <th class="num sortable sort-desc" data-key="amount">Amount <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
-            <th>Status</th>
-          </tr></thead>
-          <tbody>
-            <tr><td>Northgate Auto</td><td>J. Rivera</td><td class="num" data-amount="24500">$24,500</td><td><span class="status-chip status-chip--paid">Paid</span></td></tr>
-            <tr><td>Summit Motors</td><td>K. Osei</td><td class="num" data-amount="18900">$18,900</td><td><span class="status-chip status-chip--unpaid">Unpaid</span></td></tr>
-            <tr><td>Coastline Cars</td><td>L. Tran</td><td class="num" data-amount="31250">$31,250</td><td><span class="status-chip status-chip--pending">Pending</span></td></tr>
-            <tr><td>Apex Motors</td><td>M. Park</td><td class="num" data-amount="9800">$9,800</td><td><span class="status-chip status-chip--dead">Dead deal</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="flex items-center justify-between" style="padding:14px 20px">
-        <span class="text-sm text-3">4 of 128</span>
-        <div class="pagination">
-          <button class="page-btn" disabled><span class="material-symbols-outlined">chevron_left</span></button>
-          <button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button>
-          <button class="page-btn"><span class="material-symbols-outlined">chevron_right</span></button>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">data-table(+sortable, num) · pagination · page-btn — click a sortable header</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;table class="data-table"&gt;
+  <article class="comp" id="table">
+    <div class="comp-head"><h3>Data table</h3><p class="comp-desc">Glass table with sortable headers — click <em>Dealer</em> or <em>Amount</em>.</p></div>
+    <div class="glass-card is-static overflow-hidden" style="margin-top:14px"><div class="overflow-x-auto">
+      <table class="data-table" id="demoTable">
+        <thead><tr>
+          <th class="sortable" data-key="dealer">Dealer <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
+          <th>Customer</th>
+          <th class="num sortable sort-desc" data-key="amount">Amount <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
+          <th>Status</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Northgate Auto</td><td>J. Rivera</td><td class="num" data-amount="24500">$24,500</td><td><span class="status-chip status-chip--paid">Paid</span></td></tr>
+          <tr><td>Summit Motors</td><td>K. Osei</td><td class="num" data-amount="18900">$18,900</td><td><span class="status-chip status-chip--unpaid">Unpaid</span></td></tr>
+          <tr><td>Coastline Cars</td><td>L. Tran</td><td class="num" data-amount="31250">$31,250</td><td><span class="status-chip status-chip--pending">Pending</span></td></tr>
+          <tr><td>Apex Motors</td><td>M. Park</td><td class="num" data-amount="9800">$9,800</td><td><span class="status-chip status-chip--dead">Dead deal</span></td></tr>
+        </tbody>
+      </table>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;table class="data-table"&gt;
   &lt;thead&gt;&lt;tr&gt;
-    &lt;th class="sortable"&gt;Dealer &lt;span class="material-symbols-outlined sort-icon"&gt;unfold_more&lt;/span&gt;&lt;/th&gt;
-    &lt;th class="num sortable sort-desc"&gt;Amount …&lt;/th&gt;
+    &lt;th class="sortable"&gt;Dealer&lt;/th&gt;
+    &lt;th class="num sortable"&gt;Amount&lt;/th&gt;
   &lt;/tr&gt;&lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;&lt;td&gt;Northgate Auto&lt;/td&gt;&lt;td class="num"&gt;$24,500&lt;/td&gt;…&lt;/tr&gt;
   &lt;/tbody&gt;
-&lt;/table&gt;
+&lt;/table&gt;</code></pre></div>
+  </article>
 
-&lt;div class="pagination"&gt;
-  &lt;button class="page-btn active"&gt;1&lt;/button&gt;&lt;button class="page-btn"&gt;2&lt;/button&gt;
-&lt;/div&gt;</code></pre></div>
+  <article class="comp" id="pagination">
+    <div class="comp-head"><h3>Pagination</h3><p class="comp-desc">Page buttons with prev / next.</p></div>
+    <div class="glass-card is-static comp-preview"><div class="pagination">
+      <button class="page-btn" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+      <button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button>
+      <button class="page-btn"><span class="material-symbols-outlined">chevron_right</span></button>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+  </article>
+
+  <!-- ══════════ NAVIGATION ══════════ -->
+  <h2 class="group-title text-headline-lg">Navigation</h2>
+
+  <article class="comp" id="breadcrumbs">
+    <div class="comp-head"><h3>Breadcrumbs</h3></div>
+    <div class="glass-card is-static comp-preview"><nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><a href="#">Contracts</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><span class="current">#40231</span></nav></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;nav class="breadcrumbs"&gt;
+  &lt;a&gt;Dashboard&lt;/a&gt;&lt;span class="sep"&gt;…&lt;/span&gt;&lt;span class="current"&gt;#40231&lt;/span&gt;
+&lt;/nav&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="tabs">
+    <div class="comp-head"><h3>Tabs</h3></div>
+    <div class="glass-card is-static comp-preview block"><div class="tabs"><button class="tab active">Overview</button><button class="tab">Schedule</button><button class="tab">Documents</button><button class="tab">Activity</button></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="tabs"&gt;&lt;button class="tab active"&gt;Overview&lt;/button&gt;&lt;button class="tab"&gt;Schedule&lt;/button&gt;&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="segmented">
+    <div class="comp-head"><h3>Segmented</h3></div>
+    <div class="glass-card is-static comp-preview"><div class="segmented"><button class="seg active">Day</button><button class="seg">Week</button><button class="seg">Month</button></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="segmented"&gt;&lt;button class="seg active"&gt;Day&lt;/button&gt;&lt;button class="seg"&gt;Week&lt;/button&gt;&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="sidenav">
+    <div class="comp-head"><h3>Sidenav</h3><p class="comp-desc">Primary nav link — active state glows in from the left edge (no hard bar).</p></div>
+    <div class="glass-card is-static comp-preview block" style="max-width:260px">
+      <a class="sidenav-link active" href="#"><span class="material-symbols-outlined">dashboard</span> Overview</a>
+      <a class="sidenav-link" href="#"><span class="material-symbols-outlined">description</span> Contracts</a>
+      <a class="sidenav-link" href="#"><span class="material-symbols-outlined">insights</span> Analytics</a>
     </div>
-  </section>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;a class="sidenav-link active"&gt;&lt;span class="material-symbols-outlined"&gt;dashboard&lt;/span&gt; Overview&lt;/a&gt;</code></pre></div>
+  </article>
 
-  <!-- ════ NAVIGATION ════ -->
-  <section class="gsection" id="nav">
-    <header class="panel-head"><h2 class="text-headline-lg">Navigation</h2><span class="eyebrow">tabs · segmented</span></header>
+  <article class="comp" id="topnav">
+    <div class="comp-head"><h3>Topnav</h3><p class="comp-desc">Underline nav link.</p></div>
+    <div class="glass-card is-static comp-preview"><nav class="flex items-center gap-5"><a class="topnav-link active" href="#">Sales</a><a class="topnav-link" href="#">Finance</a><a class="topnav-link" href="#">Ops</a></nav></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;a class="topnav-link active"&gt;Sales&lt;/a&gt;</code></pre></div>
+  </article>
 
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <nav class="breadcrumbs mb-6"><a href="#">Dashboard</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><a href="#">Contracts</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><span class="current">#40231</span></nav>
+  <!-- ══════════ OVERLAYS ══════════ -->
+  <h2 class="group-title text-headline-lg">Overlays</h2>
 
-        <div class="tabs mb-6">
-          <button class="tab active">Overview</button><button class="tab">Schedule</button><button class="tab">Documents</button><button class="tab">Activity</button>
-        </div>
-
-        <div class="flex items-center gap-4 flex-wrap mb-6">
-          <div class="segmented"><button class="seg active">Day</button><button class="seg">Week</button><button class="seg">Month</button></div>
-          <nav class="flex items-center gap-5">
-            <a class="topnav-link active" href="#">Sales</a><a class="topnav-link" href="#">Finance</a><a class="topnav-link" href="#">Ops</a>
-          </nav>
-        </div>
-
-        <div style="max-width:240px">
-          <a class="sidenav-link active" href="#"><span class="material-symbols-outlined">dashboard</span> Overview</a>
-          <a class="sidenav-link" href="#"><span class="material-symbols-outlined">description</span> Contracts</a>
-          <a class="sidenav-link" href="#"><span class="material-symbols-outlined">insights</span> Analytics</a>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">breadcrumbs · tabs/tab · segmented/seg · topnav-link · sidenav-link</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;nav class="breadcrumbs"&gt;&lt;a&gt;Dashboard&lt;/a&gt;&lt;span class="sep"&gt;…&lt;/span&gt;&lt;span class="current"&gt;#40231&lt;/span&gt;&lt;/nav&gt;
-
-&lt;div class="tabs"&gt;&lt;button class="tab active"&gt;Overview&lt;/button&gt;&lt;button class="tab"&gt;Schedule&lt;/button&gt;&lt;/div&gt;
-
-&lt;div class="segmented"&gt;&lt;button class="seg active"&gt;Day&lt;/button&gt;&lt;button class="seg"&gt;Week&lt;/button&gt;&lt;/div&gt;
-
-&lt;a class="sidenav-link active"&gt;&lt;span class="material-symbols-outlined"&gt;dashboard&lt;/span&gt; Overview&lt;/a&gt;</code></pre></div>
-    </div>
-  </section>
-
-  <!-- ════ OVERLAYS ════ -->
-  <section class="gsection" id="overlays">
-    <header class="panel-head"><h2 class="text-headline-lg">Overlays</h2><span class="eyebrow">menu · modal · drawer</span></header>
-
-    <div class="flex gap-3 flex-wrap mb-6">
-      <button class="btn btn--soft" id="openModal"><span class="material-symbols-outlined">open_in_full</span> Open modal</button>
-      <button class="btn btn--soft" id="openDrawer"><span class="material-symbols-outlined">dock_to_left</span> Open drawer</button>
-      <button class="btn btn--soft" id="fireToast"><span class="material-symbols-outlined">notifications</span> Fire toast</button>
-    </div>
-
-    <div class="grid grid-2 gap-card">
-      <!-- menu -->
-      <div class="demo glass-card is-static" data-manual>
-        <div class="demo-preview block"><div class="stage">
-          <div class="menu">
-            <div class="menu-label">Actions</div>
-            <button class="menu-item"><span class="material-symbols-outlined">visibility</span> View</button>
-            <button class="menu-item"><span class="material-symbols-outlined">edit</span> Edit</button>
-            <div class="menu-sep"></div>
-            <button class="menu-item"><span class="material-symbols-outlined">delete</span> Delete</button>
-          </div>
-        </div></div>
-        <div class="demo-bar"><span class="name">menu · menu-item · menu-label · menu-sep</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-        <div class="demo-code"><pre><code>&lt;div class="menu"&gt;
+  <article class="comp" id="menu">
+    <div class="comp-head"><h3>Menu</h3><p class="comp-desc">Floating dropdown — label, items, separator.</p></div>
+    <div class="comp-preview"><div class="stage"><div class="menu">
+      <div class="menu-label">Actions</div>
+      <button class="menu-item"><span class="material-symbols-outlined">visibility</span> View</button>
+      <button class="menu-item"><span class="material-symbols-outlined">edit</span> Edit</button>
+      <div class="menu-sep"></div>
+      <button class="menu-item"><span class="material-symbols-outlined">delete</span> Delete</button>
+    </div></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="menu"&gt;
   &lt;div class="menu-label"&gt;Actions&lt;/div&gt;
   &lt;button class="menu-item"&gt;&lt;span class="material-symbols-outlined"&gt;edit&lt;/span&gt; Edit&lt;/button&gt;
   &lt;div class="menu-sep"&gt;&lt;/div&gt;
-  &lt;button class="menu-item"&gt;…&lt;/button&gt;
 &lt;/div&gt;</code></pre></div>
-      </div>
+  </article>
 
-      <!-- popover + tooltip + kbd -->
-      <div class="demo glass-card is-static" data-manual>
-        <div class="demo-preview block"><div class="stage" style="gap:14px">
-          <div class="popover">
-            <div class="label-caps text-3 mb-2">Quick view</div>
-            <div class="text-sm">Contract <span class="num text-1">#40231</span> · <span class="text-success">Paid</span></div>
-          </div>
-          <div class="flex items-center gap-3">
-            <button class="btn btn--soft btn--sm has-tip" data-tip="I'm a tooltip">Hover me</button>
-            <span class="text-sm text-2">Press <span class="kbd">⌘</span><span class="kbd">K</span></span>
-          </div>
-        </div></div>
-        <div class="demo-bar"><span class="name">popover · has-tip[data-tip] · kbd</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-        <div class="demo-code"><pre><code>&lt;div class="popover"&gt;…&lt;/div&gt;
-&lt;button class="has-tip" data-tip="I'm a tooltip"&gt;Hover me&lt;/button&gt;
-&lt;span class="kbd"&gt;⌘&lt;/span&gt;&lt;span class="kbd"&gt;K&lt;/span&gt;</code></pre></div>
-      </div>
-    </div>
+  <article class="comp" id="modal">
+    <div class="comp-head"><h3>Modal</h3><p class="comp-desc">Centered dialog over a dimmed overlay. Toggle <code class="text-mono">.hidden</code> on the overlay to show/hide.</p></div>
+    <div class="comp-preview"><button class="btn btn--soft" id="openModal"><span class="material-symbols-outlined">open_in_full</span> Open modal</button></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="modal-overlay"&gt;
+  &lt;div class="modal"&gt;
+    &lt;div class="modal-head"&gt;&lt;h3&gt;Mark as paid&lt;/h3&gt;&lt;button class="btn btn--icon"&gt;✕&lt;/button&gt;&lt;/div&gt;
+    &lt;p&gt;…&lt;/p&gt;
+    &lt;div class="flex justify-end gap-3"&gt;&lt;button class="btn btn--ghost"&gt;Cancel&lt;/button&gt;&lt;button class="btn btn--primary"&gt;Confirm&lt;/button&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Accordion</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="accordion" style="max-width:560px">
-          <details open><summary>What is the DriveSmart design system? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">One vanilla CSS file — tokens, utilities, and components. No framework.</div></details>
-          <details><summary>How do I theme it? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">Set <code class="text-mono">data-theme="light"</code> or <code class="text-mono">data-radius</code> on &lt;html&gt;.</div></details>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">accordion wraps native &lt;details&gt;</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="accordion"&gt;
+  <article class="comp" id="drawer">
+    <div class="comp-head"><h3>Drawer</h3><p class="comp-desc">Slide-over panel (right by default; <code class="text-mono">.drawer--left</code> for left).</p></div>
+    <div class="comp-preview"><button class="btn btn--soft" id="openDrawer"><span class="material-symbols-outlined">dock_to_left</span> Open drawer</button></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="drawer-overlay"&gt;&lt;/div&gt;
+&lt;aside class="drawer"&gt;
+  &lt;div class="drawer-head"&gt;&lt;h3&gt;Filters&lt;/h3&gt;&lt;button class="btn btn--icon"&gt;✕&lt;/button&gt;&lt;/div&gt;
+  …
+&lt;/aside&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="popover">
+    <div class="comp-head"><h3>Popover</h3><p class="comp-desc">Generic floating panel.</p></div>
+    <div class="comp-preview"><div class="stage"><div class="popover">
+      <div class="label-caps text-3 mb-2">Quick view</div>
+      <div class="text-sm">Contract <span class="num text-1">#40231</span> · <span class="text-success">Paid</span></div>
+    </div></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="popover"&gt;…&lt;/div&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="tooltip">
+    <div class="comp-head"><h3>Tooltip</h3><p class="comp-desc">CSS-only via <code class="text-mono">data-tip</code>.</p></div>
+    <div class="glass-card is-static comp-preview"><button class="btn btn--soft btn--sm has-tip" data-tip="I'm a tooltip">Hover me</button></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;button class="has-tip" data-tip="I'm a tooltip"&gt;Hover me&lt;/button&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="accordion">
+    <div class="comp-head"><h3>Accordion</h3><p class="comp-desc">Wraps native <code class="text-mono">&lt;details&gt;</code>.</p></div>
+    <div class="comp-preview block"><div class="accordion" style="max-width:560px">
+      <details open><summary>What is the DriveSmart design system? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">One vanilla CSS file — tokens, utilities, and components. No framework.</div></details>
+      <details><summary>How do I theme it? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">Set <code class="text-mono">data-theme="light"</code> or <code class="text-mono">data-radius</code> on &lt;html&gt;.</div></details>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="accordion"&gt;
   &lt;details open&gt;
     &lt;summary&gt;Question &lt;span class="material-symbols-outlined chev"&gt;expand_more&lt;/span&gt;&lt;/summary&gt;
     &lt;div class="acc-body"&gt;Answer.&lt;/div&gt;
   &lt;/details&gt;
 &lt;/div&gt;</code></pre></div>
-    </div>
-  </section>
+  </article>
 
-  <!-- ════ FEEDBACK ════ -->
-  <section class="gsection" id="feedback">
-    <header class="panel-head"><h2 class="text-headline-lg">Feedback</h2><span class="eyebrow">alert · toast</span></header>
+  <article class="comp" id="kbd">
+    <div class="comp-head"><h3>Keycap</h3><p class="comp-desc">Keyboard hint with a physical bottom edge.</p></div>
+    <div class="glass-card is-static comp-preview"><span class="text-sm text-2">Press <span class="kbd">⌘</span><span class="kbd">K</span> · <span class="kbd">esc</span> · <span class="kbd">↵</span></span></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="kbd"&gt;⌘&lt;/span&gt;&lt;span class="kbd"&gt;K&lt;/span&gt;</code></pre></div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Alerts &amp; banner</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="flex flex-col gap-3">
-          <div class="alert alert--info"><span class="material-symbols-outlined">info</span><div>Sync runs every 15 minutes.</div></div>
-          <div class="alert alert--success"><span class="material-symbols-outlined">check_circle</span><div>Contract marked as paid.</div></div>
-          <div class="alert alert--warning"><span class="material-symbols-outlined">warning</span><div>3 contracts pending review.</div></div>
-          <div class="alert alert--danger"><span class="material-symbols-outlined">error</span><div>Payment failed — retry required.</div></div>
-          <div class="banner banner--warning"><span class="material-symbols-outlined">campaign</span><div>Sheet sync paused.</div><div class="banner-actions"><button class="btn btn--soft btn--xs">Resume</button></div></div>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">alert--{info,success,warning,danger} · banner(+--warning)</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="alert alert--success"&gt;
+  <!-- ══════════ FEEDBACK ══════════ -->
+  <h2 class="group-title text-headline-lg">Feedback</h2>
+
+  <article class="comp" id="alert">
+    <div class="comp-head"><h3>Alert</h3><p class="comp-desc">Glassy inline notice — info / success / warning / danger.</p></div>
+    <div class="comp-preview block"><div class="flex flex-col gap-3">
+      <div class="alert alert--info"><span class="material-symbols-outlined">info</span><div>Sync runs every 15 minutes.</div></div>
+      <div class="alert alert--success"><span class="material-symbols-outlined">check_circle</span><div>Contract marked as paid.</div></div>
+      <div class="alert alert--warning"><span class="material-symbols-outlined">warning</span><div>3 contracts pending review.</div></div>
+      <div class="alert alert--danger"><span class="material-symbols-outlined">error</span><div>Payment failed — retry required.</div></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="alert alert--success"&gt;
   &lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;
   &lt;div&gt;Contract marked as paid.&lt;/div&gt;
-&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;div class="banner banner--warning"&gt;
+  <article class="comp" id="banner">
+    <div class="comp-head"><h3>Banner</h3><p class="comp-desc">Page-level notice with actions.</p></div>
+    <div class="comp-preview block"><div class="banner banner--warning"><span class="material-symbols-outlined">campaign</span><div>Sheet sync paused.</div><div class="banner-actions"><button class="btn btn--soft btn--xs">Resume</button></div></div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="banner banner--warning"&gt;
   &lt;span class="material-symbols-outlined"&gt;campaign&lt;/span&gt;
   &lt;div&gt;Sheet sync paused.&lt;/div&gt;
   &lt;div class="banner-actions"&gt;&lt;button class="btn btn--soft btn--xs"&gt;Resume&lt;/button&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre></div>
-    </div>
+  </article>
 
-    <h3 class="text-headline-md gsub">Toast · skeleton · spinner · empty state</h3>
-    <div class="demo glass-card is-static" data-manual>
-      <div class="demo-preview block">
-        <div class="flex flex-col gap-3 mb-6" style="max-width:360px">
-          <div class="toast toast--success" style="animation:none"><span class="material-symbols-outlined">check_circle</span><div>Saved.</div></div>
-          <div class="toast toast--danger" style="animation:none"><span class="material-symbols-outlined">error</span><div>Something broke.</div></div>
-          <div class="toast toast--info" style="animation:none"><span class="material-symbols-outlined">info</span><div>Syncing…</div></div>
-        </div>
-        <div class="grid grid-2 gap-card">
-          <div class="glass-card is-static p-5">
-            <div class="skeleton skeleton--text" style="width:40%"></div>
-            <div class="skeleton" style="height:48px;margin:10px 0"></div>
-            <div class="skeleton skeleton--text" style="width:80%"></div>
-            <div class="skeleton skeleton--text" style="width:60%"></div>
-          </div>
-          <div class="glass-card is-static p-5 flex items-center justify-center"><span class="spinner"></span></div>
-        </div>
-        <div class="glass-card is-static mt-4">
-          <div class="empty-state">
-            <span class="material-symbols-outlined">inbox</span>
-            <h3 class="text-headline-md">No contracts yet</h3>
-            <p>Sync a sheet or add a contract to get started.</p>
-            <button class="btn btn--primary"><span class="material-symbols-outlined">add</span> New contract</button>
-          </div>
-        </div>
-      </div>
-      <div class="demo-bar"><span class="name">toast--{success,danger,info} · skeleton(+--text) · spinner · empty-state</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
-      <div class="demo-code"><pre><code>&lt;div class="toast-stack"&gt;
+  <article class="comp" id="toast">
+    <div class="comp-head"><h3>Toast</h3><p class="comp-desc">Floating notification — success / info / danger. Stacks bottom-right.</p></div>
+    <div class="comp-preview"><button class="btn btn--soft" id="fireToast"><span class="material-symbols-outlined">notifications</span> Fire toast</button></div>
+    <div class="comp-preview block"><div class="flex flex-col gap-3" style="max-width:360px">
+      <div class="toast toast--success" style="animation:none"><span class="material-symbols-outlined">check_circle</span><div>Saved.</div></div>
+      <div class="toast toast--info" style="animation:none"><span class="material-symbols-outlined">info</span><div>Syncing…</div></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="toast-stack"&gt;
   &lt;div class="toast toast--success"&gt;&lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;&lt;div&gt;Saved.&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;div class="skeleton skeleton--text"&gt;&lt;/div&gt;
-&lt;span class="spinner"&gt;&lt;/span&gt;
+  <article class="comp" id="skeleton">
+    <div class="comp-head"><h3>Skeleton</h3><p class="comp-desc">Shimmering load placeholder.</p></div>
+    <div class="glass-card is-static comp-preview block" style="max-width:360px">
+      <div class="skeleton skeleton--text" style="width:40%"></div>
+      <div class="skeleton" style="height:48px;margin:10px 0"></div>
+      <div class="skeleton skeleton--text" style="width:80%"></div>
+      <div class="skeleton skeleton--text" style="width:60%"></div>
+    </div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="skeleton skeleton--text"&gt;&lt;/div&gt;
+&lt;div class="skeleton" style="height:48px"&gt;&lt;/div&gt;</code></pre></div>
+  </article>
 
-&lt;div class="empty-state"&gt;
+  <article class="comp" id="spinner">
+    <div class="comp-head"><h3>Spinner</h3></div>
+    <div class="glass-card is-static comp-preview"><span class="spinner"></span></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="spinner"&gt;&lt;/span&gt;</code></pre></div>
+  </article>
+
+  <article class="comp" id="empty">
+    <div class="comp-head"><h3>Empty state</h3></div>
+    <div class="glass-card is-static comp-preview block"><div class="empty-state">
+      <span class="material-symbols-outlined">inbox</span>
+      <h3 class="text-headline-md">No contracts yet</h3>
+      <p>Sync a sheet or add a contract to get started.</p>
+      <button class="btn btn--primary"><span class="material-symbols-outlined">add</span> New contract</button>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="empty-state"&gt;
   &lt;span class="material-symbols-outlined"&gt;inbox&lt;/span&gt;
   &lt;h3&gt;No contracts yet&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;
   &lt;button class="btn btn--primary"&gt;New contract&lt;/button&gt;
 &lt;/div&gt;</code></pre></div>
-    </div>
-  </section>
+  </article>
 
-  <!-- ════ DATA VIZ ════ -->
-  <section class="gsection" id="viz">
-    <header class="panel-head"><h2 class="text-headline-lg">Data viz</h2><span class="eyebrow">Chart.js · DS_CHART</span></header>
-    <div class="glass-card is-static p-5">
-      <div class="grid grid-2 gap-card">
-        <div><div class="label-caps text-2 mb-3">Status mix</div><canvas id="chartDoughnut" height="220"></canvas></div>
-        <div><div class="label-caps text-2 mb-3">Monthly volume</div><canvas id="chartBar" height="220"></canvas></div>
-      </div>
-      <p class="text-sm text-3 mt-4">Charts pull their palette from the CSS tokens via <code class="text-mono text-2">chart-theme.js</code> → <code class="text-mono text-2">DS_CHART</code>. Toggle the theme above and reload to see them re-derive.</p>
-    </div>
-  </section>
+  <!-- ══════════ DATA VIZ ══════════ -->
+  <h2 class="group-title text-headline-lg">Data viz</h2>
 
-  <footer class="text-center text-3 text-sm" style="padding-top:24px;border-top:0.5px solid var(--hairline-soft)">
-    DriveSmart Design System · vanilla CSS · <a class="text-primary" href="https://github.com/DriveSmart-Tech/drivesmart-design" target="_blank" rel="noopener">source</a> · extracted from the Dealer Sales Payment Dashboard
+  <article class="comp" id="charts">
+    <div class="comp-head"><h3>Charts</h3><p class="comp-desc">Chart.js themed from the CSS tokens via <code class="text-mono">chart-theme.js</code> → <code class="text-mono">DS_CHART</code>.</p></div>
+    <div class="glass-card is-static p-5"><div class="grid grid-2 gap-card">
+      <div><div class="label-caps text-2 mb-3">Status mix</div><canvas id="chartDoughnut" height="220"></canvas></div>
+      <div><div class="label-caps text-2 mb-3">Monthly volume</div><canvas id="chartBar" height="220"></canvas></div>
+    </div></div>
+    <div class="comp-code"><div class="comp-code-bar"><span class="lang">js</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-javascript">new Chart(ctx, {
+  type: 'doughnut',
+  data: { datasets: [{ backgroundColor: DS_CHART.series }] }
+});
+DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
+  </article>
+
+  <footer class="text-center text-3 text-sm" style="padding-top:40px;margin-top:46px;border-top:0.5px solid var(--hairline-soft)">
+    DriveSmart Design System · vanilla CSS · <a class="text-primary" href="https://github.com/DriveSmart-Tech/drivesmart-design" target="_blank" rel="noopener">source</a>
   </footer>
 </main>
 
-<!-- live overlays -->
+<!-- ── command palette ─────────────────────────────────────────────────────── -->
+<div class="cmdk-overlay hidden" id="cmdk">
+  <div class="cmdk">
+    <div class="cmdk-input"><span class="material-symbols-outlined">search</span><input id="cmdkInput" placeholder="Search components…" autocomplete="off" spellcheck="false"><span class="kbd">esc</span></div>
+    <div class="cmdk-list" id="cmdkList"></div>
+    <div class="cmdk-empty hidden" id="cmdkEmpty">No matches.</div>
+  </div>
+</div>
+
+<!-- ── live overlays ───────────────────────────────────────────────────────── -->
 <div class="modal-overlay hidden" id="modalOverlay">
   <div class="modal">
     <div class="modal-head"><h3 class="text-headline-md">Mark as paid</h3><button class="btn btn--icon" data-close-modal><span class="material-symbols-outlined">close</span></button></div>
@@ -671,164 +806,166 @@
 <script>
 (function () {
   var docEl = document.documentElement;
+  var $ = function (s) { return document.querySelector(s); };
 
-  /* ── theme + roundness toggles (persisted) ──────────────────────────────── */
+  /* ── theme + roundness (persisted) ──────────────────────────────────────── */
   function applyTheme(t) {
     if (t === 'light') docEl.setAttribute('data-theme', 'light'); else docEl.removeAttribute('data-theme');
+    var ic = $('#themeToggle .material-symbols-outlined'); if (ic) ic.textContent = (t === 'light') ? 'light_mode' : 'dark_mode';
     try { localStorage.setItem('ds-theme', t); } catch (e) {}
-    setActive('themeSeg', 'data-theme', t);
   }
   function applyRadius(r) {
     if (r) docEl.setAttribute('data-radius', r); else docEl.removeAttribute('data-radius');
+    document.querySelectorAll('#radiusSeg .seg').forEach(function (b) { b.classList.toggle('active', (b.getAttribute('data-radius') || '') === (r || '')); });
     try { localStorage.setItem('ds-radius', r); } catch (e) {}
-    setActive('radiusSeg', 'data-radius', r);
   }
-  function setActive(segId, attr, val) {
-    var segs = document.querySelectorAll('#' + segId + ' .seg');
-    segs.forEach(function (b) { b.classList.toggle('active', (b.getAttribute(attr) || '') === (val || '')); });
-  }
-  document.getElementById('themeSeg').addEventListener('click', function (e) {
-    var b = e.target.closest('.seg'); if (b) applyTheme(b.getAttribute('data-theme'));
-  });
-  document.getElementById('radiusSeg').addEventListener('click', function (e) {
-    var b = e.target.closest('.seg'); if (b) applyRadius(b.getAttribute('data-radius'));
-  });
-  try {
-    applyTheme(localStorage.getItem('ds-theme') || 'dark');
-    applyRadius(localStorage.getItem('ds-radius') || '');
-  } catch (e) { applyTheme('dark'); applyRadius(''); }
+  $('#themeToggle').addEventListener('click', function () { applyTheme(docEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); });
+  var rseg = $('#radiusSeg');
+  if (rseg) rseg.addEventListener('click', function (e) { var b = e.target.closest('.seg'); if (b) applyRadius(b.getAttribute('data-radius')); });
+  try { applyTheme(localStorage.getItem('ds-theme') || 'dark'); applyRadius(localStorage.getItem('ds-radius') || ''); } catch (e) {}
 
-  /* ── auto-fill code blocks from the rendered preview (no duplication) ────── */
+  /* ── auto-fill empty code blocks from the rendered preview ───────────────── */
   function dedent(s) {
     s = s.replace(/^\s*\n/, '').replace(/\s+$/, '');
     var lines = s.split('\n');
-    var indents = lines.filter(function (l) { return l.trim(); })
-                       .map(function (l) { return l.match(/^[ \t]*/)[0].length; });
-    var min = indents.length ? Math.min.apply(null, indents) : 0;
+    var ind = lines.filter(function (l) { return l.trim(); }).map(function (l) { return l.match(/^[ \t]*/)[0].length; });
+    var min = ind.length ? Math.min.apply(null, ind) : 0;
     return lines.map(function (l) { return l.slice(min); }).join('\n');
   }
-  document.querySelectorAll('.demo').forEach(function (demo) {
-    var pre = demo.querySelector('.demo-code code');
-    var preview = demo.querySelector('.demo-preview');
-    if (pre && preview && !pre.textContent.trim()) {
-      pre.textContent = dedent(preview.innerHTML);
-    }
+  document.querySelectorAll('.comp').forEach(function (comp) {
+    var code = comp.querySelector('.comp-code code');
+    var preview = comp.querySelector('.comp-preview');
+    if (code && preview && !code.textContent.trim()) code.textContent = dedent(preview.innerHTML);
   });
+  if (window.Prism) Prism.highlightAll();
 
-  /* ── show/hide + copy per-demo ──────────────────────────────────────────── */
-  function flash(btn, msg) {
-    var old = btn.textContent; btn.textContent = msg; btn.classList.add('copied');
-    setTimeout(function () { btn.textContent = old; btn.classList.remove('copied'); }, 1400);
-  }
+  /* ── copy per-demo + full CSS ───────────────────────────────────────────── */
+  function flash(btn, msg) { var o = btn.textContent; btn.textContent = msg; btn.classList.add('copied'); setTimeout(function () { btn.textContent = o; btn.classList.remove('copied'); }, 1400); }
   function copy(text) {
     if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
     var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta);
-    return Promise.resolve();
+    try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); return Promise.resolve();
   }
-  document.querySelectorAll('.toggle-code').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var demo = btn.closest('.demo'); var open = demo.classList.toggle('open');
-      btn.textContent = open ? 'Hide code' : 'Show code';
-    });
-  });
   document.querySelectorAll('.copy-code').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var code = btn.closest('.demo').querySelector('.demo-code code');
-      copy(code.textContent).then(function () { flash(btn, 'Copied'); });
-    });
+    btn.addEventListener('click', function () { copy(btn.closest('.comp-code').querySelector('code').textContent).then(function () { flash(btn, 'Copied'); }); });
   });
-
-  /* ── copy full CSS ──────────────────────────────────────────────────────── */
-  document.getElementById('copyCssBtn').addEventListener('click', function () {
+  $('#copyCssBtn').addEventListener('click', function () {
     var btn = this;
-    fetch('drivesmart.css').then(function (r) { return r.text(); })
-      .then(function (css) { return copy(css); })
-      .then(function () { flash(btn.querySelector('span:last-child') || btn, 'Copied!'); })
-      .catch(function () { flash(btn, 'Open over http to copy'); });
+    fetch('drivesmart.css').then(function (r) { return r.text(); }).then(copy)
+      .then(function () { flash(btn, 'Copied!'); }).catch(function () { flash(btn, 'serve over http'); });
   });
 
-  /* ── sortable demo table ────────────────────────────────────────────────── */
-  var table = document.getElementById('demoTable');
-  if (table) {
-    table.querySelectorAll('th.sortable').forEach(function (th, idx) {
-      th.addEventListener('click', function () {
-        var asc = !th.classList.contains('sort-asc');
-        table.querySelectorAll('th.sortable').forEach(function (h) { h.classList.remove('sort-asc', 'sort-desc'); });
-        th.classList.add(asc ? 'sort-asc' : 'sort-desc');
-        var tbody = table.tBodies[0];
-        var rows = Array.prototype.slice.call(tbody.rows);
-        var ci = th.cellIndex;
-        rows.sort(function (a, b) {
-          var av = a.cells[ci].getAttribute('data-amount'), bv = b.cells[ci].getAttribute('data-amount');
-          if (av !== null && bv !== null) { av = +av; bv = +bv; }
-          else { av = a.cells[ci].textContent.trim(); bv = b.cells[ci].textContent.trim(); }
-          return (av < bv ? -1 : av > bv ? 1 : 0) * (asc ? 1 : -1);
-        });
-        rows.forEach(function (r) { tbody.appendChild(r); });
-      });
+  /* ── command palette ────────────────────────────────────────────────────── */
+  var cmdk = $('#cmdk'), cmdkInput = $('#cmdkInput'), cmdkList = $('#cmdkList'), cmdkEmpty = $('#cmdkEmpty');
+  var ITEMS = Array.prototype.map.call(document.querySelectorAll('#sideNav .nav-link[href^="#"]'), function (a) {
+    return { id: a.getAttribute('href').slice(1),
+             label: (a.querySelector('.lbl') || a).textContent.trim(),
+             group: (a.closest('.nav-group').querySelector('.nav-group-label') || {}).textContent || '',
+             icon: (a.querySelector('.material-symbols-outlined') || {}).textContent || 'chevron_right' };
+  });
+  var activeIdx = 0, shown = [];
+  function renderCmdk(q) {
+    q = (q || '').toLowerCase().trim();
+    shown = ITEMS.filter(function (it) { return (it.label + ' ' + it.group).toLowerCase().indexOf(q) !== -1; });
+    activeIdx = 0;
+    cmdkEmpty.classList.toggle('hidden', shown.length > 0);
+    var html = '', lastG = null;
+    shown.forEach(function (it, i) {
+      if (it.group !== lastG) { html += '<div class="cmdk-group-label">' + it.group + '</div>'; lastG = it.group; }
+      html += '<div class="cmdk-item' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" data-id="' + it.id + '">' +
+              '<span class="material-symbols-outlined">' + it.icon + '</span>' + it.label +
+              '<span class="cmdk-grp">' + it.group + '</span></div>';
     });
+    cmdkList.innerHTML = html;
   }
+  function setActive(i) {
+    var els = cmdkList.querySelectorAll('.cmdk-item'); if (!els.length) return;
+    activeIdx = (i + els.length) % els.length;
+    els.forEach(function (el, n) { el.classList.toggle('active', n === activeIdx); });
+    els[activeIdx].scrollIntoView({ block: 'nearest' });
+  }
+  function go(id) { closeCmdk(); var el = document.getElementById(id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#' + id); } }
+  function openCmdk() { cmdk.classList.remove('hidden'); cmdkInput.value = ''; renderCmdk(''); cmdkInput.focus(); }
+  function closeCmdk() { cmdk.classList.add('hidden'); }
+  $('#cmdkOpen').addEventListener('click', openCmdk);
+  cmdkInput.addEventListener('input', function () { renderCmdk(this.value); });
+  cmdkInput.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIdx + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIdx - 1); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (shown[activeIdx]) go(shown[activeIdx].id); }
+  });
+  cmdkList.addEventListener('click', function (e) { var it = e.target.closest('.cmdk-item'); if (it) go(it.getAttribute('data-id')); });
+  cmdk.addEventListener('click', function (e) { if (e.target === cmdk) closeCmdk(); });
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); cmdk.classList.contains('hidden') ? openCmdk() : closeCmdk(); }
+    if (e.key === 'Escape') { closeCmdk(); hide(modalOverlay); closeDrawer(); }
+  });
+
+  /* ── sortable table ─────────────────────────────────────────────────────── */
+  var table = $('#demoTable');
+  if (table) table.querySelectorAll('th.sortable').forEach(function (th) {
+    th.addEventListener('click', function () {
+      var asc = !th.classList.contains('sort-asc');
+      table.querySelectorAll('th.sortable').forEach(function (h) { h.classList.remove('sort-asc', 'sort-desc'); });
+      th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+      var tb = table.tBodies[0], rows = Array.prototype.slice.call(tb.rows), ci = th.cellIndex;
+      rows.sort(function (a, b) {
+        var av = a.cells[ci].getAttribute('data-amount'), bv = b.cells[ci].getAttribute('data-amount');
+        if (av !== null && bv !== null) { av = +av; bv = +bv; } else { av = a.cells[ci].textContent.trim(); bv = b.cells[ci].textContent.trim(); }
+        return (av < bv ? -1 : av > bv ? 1 : 0) * (asc ? 1 : -1);
+      });
+      rows.forEach(function (r) { tb.appendChild(r); });
+    });
+  });
 
   /* ── live overlays ──────────────────────────────────────────────────────── */
   function show(el) { el.classList.remove('hidden'); }
   function hide(el) { el.classList.add('hidden'); }
-  var modalOverlay = document.getElementById('modalOverlay');
-  document.getElementById('openModal').addEventListener('click', function () { show(modalOverlay); });
+  var modalOverlay = $('#modalOverlay');
+  $('#openModal').addEventListener('click', function () { show(modalOverlay); });
   modalOverlay.addEventListener('click', function (e) { if (e.target === modalOverlay || e.target.closest('[data-close-modal]')) hide(modalOverlay); });
-
-  var drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay');
-  document.getElementById('openDrawer').addEventListener('click', function () { show(drawer); show(drawerOverlay); });
+  var drawer = $('#drawer'), drawerOverlay = $('#drawerOverlay');
+  $('#openDrawer').addEventListener('click', function () { show(drawer); show(drawerOverlay); });
   function closeDrawer() { hide(drawer); hide(drawerOverlay); }
   drawerOverlay.addEventListener('click', closeDrawer);
   drawer.addEventListener('click', function (e) { if (e.target.closest('[data-close-drawer]')) closeDrawer(); });
-
-  var toastStack = document.getElementById('toastStack'), toastN = 0;
-  document.getElementById('fireToast').addEventListener('click', function () {
-    var kinds = [['success', 'check_circle', 'Contract saved.'], ['info', 'info', 'Sync started.'], ['danger', 'error', 'Sync failed — retry.']];
-    var k = kinds[toastN++ % kinds.length];
-    var t = document.createElement('div');
-    t.className = 'toast toast--' + k[0];
+  var toastStack = $('#toastStack'), tn = 0;
+  $('#fireToast').addEventListener('click', function () {
+    var k = [['success', 'check_circle', 'Contract saved.'], ['info', 'info', 'Sync started.'], ['danger', 'error', 'Sync failed — retry.']][tn++ % 3];
+    var t = document.createElement('div'); t.className = 'toast toast--' + k[0];
     t.innerHTML = '<span class="material-symbols-outlined">' + k[1] + '</span><div>' + k[2] + '</div>';
     toastStack.appendChild(t);
     setTimeout(function () { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2600);
   });
 
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { hide(modalOverlay); closeDrawer(); } });
-
-  /* ── sidebar active-link on scroll ──────────────────────────────────────── */
-  var links = document.querySelectorAll('.app-sidebar .sidenav-link[href^="#"]');
-  var sections = Array.prototype.map.call(links, function (l) { return document.querySelector(l.getAttribute('href')); });
+  /* ── sidebar active link on scroll ──────────────────────────────────────── */
+  var links = document.querySelectorAll('#sideNav .nav-link[href^="#"]');
+  var byId = {}; links.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) {
-          links.forEach(function (l) { l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id); });
+          var l = byId[en.target.id]; if (!l) return;
+          links.forEach(function (x) { x.classList.remove('active'); }); l.classList.add('active');
+          l.scrollIntoView({ block: 'nearest' });
         }
       });
-    }, { rootMargin: '-40% 0px -55% 0px' });
-    sections.forEach(function (s) { if (s) obs.observe(s); });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.comp[id]').forEach(function (s) { obs.observe(s); });
   }
 
-  /* ── charts (after chart.js + chart-theme.js load) ──────────────────────── */
+  /* ── charts ─────────────────────────────────────────────────────────────── */
   function drawCharts() {
-    if (typeof Chart === 'undefined' || !window.DS_CHART) { return setTimeout(drawCharts, 120); }
+    if (typeof Chart === 'undefined' || !window.DS_CHART) return setTimeout(drawCharts, 120);
     var d = window.DS_CHART;
-    new Chart(document.getElementById('chartDoughnut'), {
-      type: 'doughnut',
-      data: { labels: ['Paid', 'Unpaid', 'Pending', 'Dead'],
-        datasets: [{ data: [12847, 3109, 842, 410], backgroundColor: [d.statusColor('paid'), d.statusColor('unpaid'), d.statusColor('pending'), d.statusColor('dead')], borderWidth: 0 }] },
-      options: { cutout: '64%', plugins: { legend: { position: 'bottom' } } }
-    });
-    new Chart(document.getElementById('chartBar'), {
-      type: 'bar',
-      data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{ label: 'Volume', data: [320, 410, 380, 520, 470, 610], backgroundColor: d.palette.primary, borderRadius: 6, maxBarThickness: 28 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: d.axis, y: d.axis } }
-    });
+    new Chart($('#chartDoughnut'), { type: 'doughnut',
+      data: { labels: ['Paid', 'Unpaid', 'Pending', 'Dead'], datasets: [{ data: [12847, 3109, 842, 410], backgroundColor: [d.statusColor('paid'), d.statusColor('unpaid'), d.statusColor('pending'), d.statusColor('dead')], borderWidth: 0 }] },
+      options: { cutout: '64%', plugins: { legend: { position: 'bottom' } } } });
+    new Chart($('#chartBar'), { type: 'bar',
+      data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'Volume', data: [320, 410, 380, 520, 470, 610], backgroundColor: d.palette.primary, borderRadius: 6, maxBarThickness: 28 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: d.axis, y: d.axis } } });
   }
-  if (document.readyState === 'complete') drawCharts();
-  else window.addEventListener('load', drawCharts);
+  if (document.readyState === 'complete') drawCharts(); else window.addEventListener('load', drawCharts);
 })();
 </script>
 <script src="chart-theme.js" defer></script>
