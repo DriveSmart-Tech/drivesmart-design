@@ -51,6 +51,10 @@
   .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 50%, transparent); }
 
   .copied { color: var(--success) !important; }
+
+  /* .modal-overlay declares display:grid, which beats the system's .hidden
+     (same specificity, defined later) — force hidden to win for the live overlays */
+  .modal-overlay.hidden, .drawer.hidden, .drawer-overlay.hidden { display: none !important; }
 </style>
 </head>
 <body class="bg-grid-pattern">
