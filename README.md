@@ -29,6 +29,7 @@ Fonts (Hanken Grotesk / Inter / Geist) are `@import`ed inside `drivesmart.css`.
 - **`chart-theme.js`** — Chart.js theme → `DS_CHART` (load after chart.js).
 - **`count-up.js`** — animates `[data-count]` numbers.
 - **`index.html`** — the live gallery (served via GitHub Pages above).
+- **`docs.html`** — in-browser reader for the Brand guide (`docs.html?doc=brand`) and Spec (`docs.html?doc=design`).
 - **[`DESIGN.md`](DESIGN.md)** — full spec: every token, class, rule.
 - **[`BRAND.md`](BRAND.md)** — non-code brand spec for designers / marketing.
 

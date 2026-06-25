@@ -47,13 +47,16 @@
   .comp-desc { color: var(--text-2); font-size: 13px; margin-top: 5px; max-width: 72ch; }
   .comp-preview { padding: 30px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
   .comp-preview.block { display: block; }
-  .comp-code { position: relative; margin-top: 10px; }
-  .comp-code pre { margin: 0; padding: 14px 16px; overflow-x: auto; border-radius: var(--r-lg);
+  .comp-code { position: relative; margin-top: 10px; border: 0.5px solid var(--glass-border); border-radius: var(--r-xl);
     background: color-mix(in srgb, var(--surface-lowest) 55%, transparent); }
+  .comp-code pre { margin: 0; padding: 16px 18px; overflow-x: auto; background: none; border-radius: var(--r-xl); }
   .comp-code code { font-family: var(--f-mono); font-size: 12.5px; line-height: 1.7; white-space: pre; }
-  /* copy: subtle, hover-revealed — no toolbar chrome */
-  .comp-copy { position: absolute; top: 7px; right: 7px; opacity: 0; transition: opacity .15s; }
-  .comp-code:hover .comp-copy, .comp-copy:focus-visible { opacity: 1; }
+  /* always-visible copy button, top-right, legible over the code */
+  .comp-copy { position: absolute; top: 8px; right: 8px; gap: 5px; color: var(--text-2);
+    background: color-mix(in srgb, var(--surface-high) 90%, transparent); border: 0.5px solid var(--hairline);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .comp-copy:hover { background: var(--surface-high); color: var(--text-1); }
+  .comp-copy .material-symbols-outlined { font-size: 14px; }
 
   /* swatches + radius demo ------------------------------------------------- */
   .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 26px; }
@@ -98,6 +101,10 @@
   .token.number, .token.boolean, .token.constant, .token.symbol { color: var(--warning); }
   .token.operator, .token.entity, .token.url { color: var(--text-2); }
   .token.function { color: var(--primary); }
+  /* tokens carry colour ONLY — never a box. Prism's .token.tag collides with the
+     system's .tag chip component (bg + border + padding), which drew a box behind
+     every tag. Reset all box styling on tokens inside highlighted code. */
+  code[class*="language-"] .token { background: none !important; border: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
 
   @media (max-width: 860px) { body { padding-left: 0; } .app-sidebar { display: none; } .app-content { padding: 20px 18px 80px; } }
 </style>
@@ -113,6 +120,10 @@
   </div>
   <div class="side-scroll">
     <nav id="sideNav">
+      <div class="nav-group">
+        <div class="nav-group-label">Get started</div>
+        <a class="nav-link" href="#install"><span class="material-symbols-outlined">rocket_launch</span><span class="lbl">Installation</span></a>
+      </div>
       <div class="nav-group">
         <div class="nav-group-label">Foundations</div>
         <a class="nav-link" href="#colors"><span class="material-symbols-outlined">palette</span><span class="lbl">Colors</span></a>
@@ -194,7 +205,11 @@
 
 <!-- ── Topbar ──────────────────────────────────────────────────────────────── -->
 <header class="app-topbar glass-nav">
-  <div class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Design System · v1.0</span></div>
+  <nav class="flex items-center gap-4">
+    <a class="topnav-link active" href="index.html">Gallery</a>
+    <a class="topnav-link" href="docs.html?doc=brand">Brand&nbsp;guide</a>
+    <a class="topnav-link" href="docs.html?doc=design">Spec</a>
+  </nav>
   <div class="ml-auto flex items-center gap-3">
     <button class="searchbar" id="cmdkOpen">
       <span class="material-symbols-outlined">search</span> Search components…
@@ -216,6 +231,49 @@
       <span class="badge">vanilla CSS</span><span class="badge badge--neutral">no React</span><span class="badge badge--neutral">no Tailwind</span><span class="badge badge--neutral">no build</span><span class="badge badge--success">light + dark</span>
     </div>
   </div>
+
+  <!-- ══════════ GET STARTED ══════════ -->
+  <h2 class="group-title text-headline-lg">Get started</h2>
+
+  <article class="comp" id="install" data-keep>
+    <div class="comp-head"><h3>Installation</h3><p class="comp-desc">Three ways in — drop the CSS into any project, install the Claude Code skill, or hand the brand guide to a designer. No build step, no dependencies.</p></div>
+
+    <h4 class="text-headline-md" style="margin:26px 0 6px">1 · Drop-in CSS <span class="badge badge--neutral">any project</span></h4>
+    <p class="comp-desc" style="margin-top:0">Copy <code class="text-mono text-1">drivesmart.css</code> into your project and link it — that's the whole system. Fonts are <code class="text-mono">@import</code>ed inside it. Or hit <b>CSS</b> (top-right of the topbar) to copy the entire file.</p>
+    <div class="comp-code"><pre><code class="language-markup">&lt;link rel="stylesheet" href="drivesmart.css"&gt;
+&lt;!-- icons (optional) --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"&gt;
+
+&lt;body class="bg-grid-pattern"&gt;
+  &lt;div class="aurora-bg"&gt;&lt;/div&gt;
+  &lt;div class="glass-card card-mesh-success p-5"&gt;
+    &lt;div class="metric text-success"&gt;12,847&lt;/div&gt;
+    &lt;div class="label-caps text-2 mt-2"&gt;Paid&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/body&gt;</code></pre></div>
+
+    <h4 class="text-headline-md" style="margin:30px 0 6px">2 · Claude Code skill <span class="badge">marketplace</span></h4>
+    <p class="comp-desc" style="margin-top:0">The system also ships as a <b>Claude Code plugin</b> — the <code class="text-mono text-1">/drivesmart-design</code> skill — distributed through the <b>DriveSmart marketplace</b> (<a class="text-primary" href="https://github.com/DriveSmart-Tech/drivesmart-marketplace" target="_blank" rel="noopener">DriveSmart-Tech/drivesmart-marketplace</a>, the home for all DriveSmart plugins / skills / agents). In any Claude Code session:</p>
+    <div class="comp-code"><pre><code class="language-markup">/plugin marketplace add DriveSmart-Tech/drivesmart-marketplace
+/plugin install drivesmart-design@drivesmart</code></pre></div>
+    <p class="comp-desc">Then the skill drives the system for you:</p>
+    <div class="glass-card is-static overflow-hidden" style="margin-top:6px"><div class="overflow-x-auto"><table class="data-table">
+      <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>/drivesmart-design</td><td>Drop the system into the current project + scaffold an app-shell.</td></tr>
+        <tr><td>/drivesmart-design audit</td><td>Read-only audit of an existing UI vs the system → DRIVESMART-REVIEW.md.</td></tr>
+        <tr><td>/drivesmart-design migrate</td><td>Audit, then migrate the UI onto the system surface-by-surface.</td></tr>
+        <tr><td>/drivesmart-design reference</td><td>Answer “what class / token do I use for X”.</td></tr>
+      </tbody>
+    </table></div></div>
+
+    <h4 class="text-headline-md" style="margin:30px 0 6px">3 · Designers &amp; marketing <span class="badge badge--success">no code</span></h4>
+    <p class="comp-desc" style="margin-top:0">Not a developer? The <a class="text-primary" href="docs.html?doc=brand">Brand guide</a> is the whole look in plain language — every colour (with copy-paste hex), font and size for Figma, Canva, slides, social or print. The full technical <a class="text-primary" href="docs.html?doc=design">Spec</a> renders the <code class="text-mono">DESIGN.md</code> reference.</p>
+    <div class="comp-preview">
+      <a class="btn btn--soft" href="docs.html?doc=brand"><span class="material-symbols-outlined">palette</span> Open Brand guide</a>
+      <a class="btn" href="docs.html?doc=design"><span class="material-symbols-outlined">description</span> Read the Spec</a>
+    </div>
+  </article>
 
   <!-- ══════════ FOUNDATIONS ══════════ -->
   <h2 class="group-title text-headline-lg">Foundations</h2>
@@ -254,7 +312,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
 &lt;p class="num"&gt;$ 1,284,907.50&lt;/p&gt;</code></pre></div>
   </article>
 
-  <article class="comp" id="radius">
+  <article class="comp" id="radius" data-keep>
     <div class="comp-head"><h3>Radius</h3><p class="comp-desc">Five radius tokens. Set <code class="text-mono">data-radius="sharp|round"</code> on <code class="text-mono">&lt;html&gt;</code> to re-round the entire UI — every component reads these radius tokens.</p></div>
     <div class="glass-card is-static comp-preview">
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-sm)"></div><span class="label-caps text-3">r-sm</span></div>
@@ -620,7 +678,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
 &lt;/div&gt;</code></pre></div>
   </article>
 
-  <article class="comp" id="modal">
+  <article class="comp" id="modal" data-keep>
     <div class="comp-head"><h3>Modal</h3><p class="comp-desc">Centered dialog over a dimmed overlay. Toggle <code class="text-mono">.hidden</code> on the overlay to show/hide.</p></div>
     <div class="comp-preview"><button class="btn btn--soft" id="openModal"><span class="material-symbols-outlined">open_in_full</span> Open modal</button></div>
     <div class="comp-code"><pre><code class="language-markup">&lt;div class="modal-overlay"&gt;
@@ -632,7 +690,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
 &lt;/div&gt;</code></pre></div>
   </article>
 
-  <article class="comp" id="drawer">
+  <article class="comp" id="drawer" data-keep>
     <div class="comp-head"><h3>Drawer</h3><p class="comp-desc">Slide-over panel (right by default; <code class="text-mono">.drawer--left</code> for left).</p></div>
     <div class="comp-preview"><button class="btn btn--soft" id="openDrawer"><span class="material-symbols-outlined">dock_to_left</span> Open drawer</button></div>
     <div class="comp-code"><pre><code class="language-markup">&lt;div class="drawer-overlay"&gt;&lt;/div&gt;
@@ -704,7 +762,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
 &lt;/div&gt;</code></pre></div>
   </article>
 
-  <article class="comp" id="toast">
+  <article class="comp" id="toast" data-keep>
     <div class="comp-head"><h3>Toast</h3><p class="comp-desc">Floating notification — success / info / danger. Stacks bottom-right.</p></div>
     <div class="comp-preview"><button class="btn btn--soft" id="fireToast"><span class="material-symbols-outlined">notifications</span> Fire toast</button></div>
     <div class="comp-preview block"><div class="flex flex-col gap-3" style="max-width:360px">
@@ -812,17 +870,35 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
   try { applyTheme(localStorage.getItem('ds-theme') || 'dark'); } catch (e) {}
 
   /* ── auto-fill empty code blocks from the rendered preview ───────────────── */
-  function dedent(s) {
-    s = s.replace(/^\s*\n/, '').replace(/\s+$/, '');
-    var lines = s.split('\n');
-    var ind = lines.filter(function (l) { return l.trim(); }).map(function (l) { return l.match(/^[ \t]*/)[0].length; });
-    var min = ind.length ? Math.min.apply(null, ind) : 0;
-    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  // pretty-print live DOM → clean, indented HTML (one element per line)
+  var VOID = { area: 1, base: 1, br: 1, col: 1, embed: 1, hr: 1, img: 1, input: 1, link: 1, meta: 1, source: 1, track: 1, wbr: 1 };
+  function attrStr(el) {
+    var s = '';
+    for (var i = 0; i < el.attributes.length; i++) { var a = el.attributes[i]; s += (a.value === '') ? ' ' + a.name : ' ' + a.name + '="' + a.value + '"'; }
+    return s;
   }
+  function fmt(node, ind) {
+    if (node.nodeType === 3) { var t = node.textContent.replace(/\s+/g, ' ').trim(); return t ? ind + t : ''; }
+    if (node.nodeType !== 1) return '';
+    var tag = node.tagName.toLowerCase(), open = '<' + tag + attrStr(node) + '>';
+    if (VOID[tag]) return ind + open;
+    var kids = [];
+    node.childNodes.forEach(function (c) { var f = fmt(c, ind + '  '); if (f) kids.push(f); });
+    if (kids.length === 0) return ind + open + '</' + tag + '>';
+    if (kids.length === 1 && node.children.length === 0) return ind + open + kids[0].trim() + '</' + tag + '>';
+    return ind + open + '\n' + kids.join('\n') + '\n' + ind + '</' + tag + '>';
+  }
+  function formatPreview(preview) {
+    var out = [];
+    preview.childNodes.forEach(function (c) { var f = fmt(c, ''); if (f) out.push(f); });
+    return out.join('\n');
+  }
+  // derive each snippet from its rendered preview (skip data-keep: hand-written / trigger-only previews)
   document.querySelectorAll('.comp').forEach(function (comp) {
+    if (comp.hasAttribute('data-keep')) return;
     var code = comp.querySelector('.comp-code code');
     var preview = comp.querySelector('.comp-preview');
-    if (code && preview && !code.textContent.trim()) code.textContent = dedent(preview.innerHTML);
+    if (code && preview) code.textContent = formatPreview(preview);
   });
   if (window.Prism) Prism.highlightAll();
 
@@ -835,8 +911,14 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
   }
   document.querySelectorAll('.comp-code').forEach(function (box) {
     var btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'btn btn--ghost btn--xs comp-copy'; btn.textContent = 'Copy';
-    btn.addEventListener('click', function () { copy(box.querySelector('code').textContent).then(function () { flash(btn, 'Copied'); }); });
+    btn.type = 'button'; btn.className = 'btn btn--ghost btn--xs comp-copy';
+    btn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>Copy';
+    btn.addEventListener('click', function () {
+      copy(box.querySelector('code').textContent).then(function () {
+        var old = btn.innerHTML; btn.innerHTML = '<span class="material-symbols-outlined">check</span>Copied'; btn.classList.add('copied');
+        setTimeout(function () { btn.innerHTML = old; btn.classList.remove('copied'); }, 1400);
+      });
+    });
     box.appendChild(btn);
   });
   $('#copyCssBtn').addEventListener('click', function () {
