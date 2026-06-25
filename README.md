@@ -65,9 +65,11 @@ Then:
 | `/drivesmart-design migrate` | Audit, then migrate the UI onto the system surface-by-surface. |
 | `/drivesmart-design reference` | Answer "what class / token do I use for X". |
 
-The skill source lives in [`skill/drivesmart-design/`](skill/drivesmart-design/) and is mirrored
-into the marketplace repo. To install without the marketplace:
-`cp -r skill/drivesmart-design ~/.claude/skills/`.
+The skill, plugin, and marketplace manifest live in a **separate repo** —
+[`DriveSmart-Tech/drivesmart-marketplace`](https://github.com/DriveSmart-Tech/drivesmart-marketplace)
+(home for all DriveSmart Claude Code plugins / skills / agents). This repo is the design system itself
+(CSS + gallery) and the source the skill mirrors. To install the skill without the marketplace:
+`cp -r <marketplace>/plugins/drivesmart-design/skills/drivesmart-design ~/.claude/skills/`.
 
 ---
 

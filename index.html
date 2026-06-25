@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveSmart Design System — Gallery</title>
+<meta name="description" content="Live component gallery for the DriveSmart design system — dark glassmorphism, vanilla CSS, zero framework.">
+<link rel="stylesheet" href="drivesmart.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<style>
+  /* ── gallery chrome (not part of the system — just lays out this page) ────── */
+  html { scroll-behavior: smooth; }
+  body { padding-left: 252px; }
+
+  .app-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 252px; z-index: 20; display: flex; flex-direction: column; }
+  .app-sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 14px; }
+  .app-sidebar .brand .mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--r-lg); background: linear-gradient(to bottom right, var(--primary), var(--primary-container)); }
+  .app-sidebar .brand .mark .material-symbols-outlined { color: var(--surface-lowest); font-size: 19px; }
+  .app-sidebar nav { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; flex: 1; overflow-y: auto; }
+  .app-sidebar .sidenav-link { cursor: pointer; }
+
+  .app-topbar { position: sticky; top: 0; z-index: 10; min-height: 60px; display: flex; align-items: center; gap: 16px; padding: 10px 26px; flex-wrap: wrap; }
+  .app-content { padding: 26px 30px 90px; max-width: 1140px; }
+
+  .gsection { margin-bottom: var(--gap-section); scroll-margin-top: 84px; }
+  .gsection > header { margin-bottom: 16px; }
+  .gsub { margin: 22px 0 10px; }
+
+  /* demo card: preview + toolbar + (toggle) code */
+  .demo { overflow: hidden; }
+  .demo + .demo { margin-top: 16px; }
+  .demo-preview { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 24px; }
+  .demo-preview.block { display: block; }
+  .demo-bar { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-top: 0.5px solid var(--hairline-soft); }
+  .demo-bar .name { font-family: var(--f-mono); font-size: 11px; color: var(--text-3); letter-spacing: .04em; }
+  .demo-code { display: none; border-top: 0.5px solid var(--hairline-soft); }
+  .demo.open .demo-code { display: block; }
+  .demo-code pre { margin: 0; padding: 16px 18px; overflow-x: auto; }
+  .demo-code code { font-family: var(--f-mono); font-size: 12px; line-height: 1.65; color: var(--text-2); white-space: pre; }
+
+  /* swatches */
+  .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 24px; }
+  .swatch { border-radius: var(--r-lg); border: 0.5px solid var(--hairline); overflow: hidden; }
+  .swatch .chip { height: 56px; }
+  .swatch .meta { padding: 8px 10px; background: var(--surface-low); }
+  .swatch .meta .nm { font-family: var(--f-mono); font-size: 11px; color: var(--text-1); }
+  .swatch .meta .vv { font-family: var(--f-mono); font-size: 10px; color: var(--text-3); }
+
+  /* a relative stage so position:fixed overlays can be shown statically */
+  .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 50%, transparent); }
+
+  .copied { color: var(--success) !important; }
+</style>
+</head>
+<body class="bg-grid-pattern">
+<div class="aurora-bg"></div>
+
+<!-- ── Sidebar nav ─────────────────────────────────────────────────────────── -->
+<aside class="app-sidebar glass-sidebar">
+  <div class="brand">
+    <span class="mark"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">directions_car</span></span>
+    <span class="text-headline-md">DriveSmart</span>
+  </div>
+  <nav>
+    <a class="sidenav-link active" href="#foundations"><span class="material-symbols-outlined">palette</span> Foundations</a>
+    <a class="sidenav-link" href="#buttons"><span class="material-symbols-outlined">smart_button</span> Buttons</a>
+    <a class="sidenav-link" href="#surfaces"><span class="material-symbols-outlined">dashboard</span> Surfaces &amp; KPI</a>
+    <a class="sidenav-link" href="#status"><span class="material-symbols-outlined">label</span> Status &amp; Tags</a>
+    <a class="sidenav-link" href="#forms"><span class="material-symbols-outlined">edit_note</span> Forms</a>
+    <a class="sidenav-link" href="#data"><span class="material-symbols-outlined">table</span> Data display</a>
+    <a class="sidenav-link" href="#nav"><span class="material-symbols-outlined">menu</span> Navigation</a>
+    <a class="sidenav-link" href="#overlays"><span class="material-symbols-outlined">layers</span> Overlays</a>
+    <a class="sidenav-link" href="#feedback"><span class="material-symbols-outlined">notifications</span> Feedback</a>
+    <a class="sidenav-link" href="#viz"><span class="material-symbols-outlined">monitoring</span> Data viz</a>
+  </nav>
+  <div style="padding:12px 16px;border-top:0.5px solid var(--hairline-soft)">
+    <a class="sidenav-link" href="https://github.com/DriveSmart-Tech/drivesmart-design" target="_blank" rel="noopener"><span class="material-symbols-outlined">code</span> Source</a>
+  </div>
+</aside>
+
+<!-- ── Topbar (controls) ───────────────────────────────────────────────────── -->
+<header class="app-topbar glass-nav">
+  <div class="flex items-center gap-2">
+    <span class="dot dot--live"></span>
+    <span class="eyebrow">Design System · v1.0</span>
+  </div>
+  <div class="ml-auto flex items-center gap-3 flex-wrap">
+    <div class="flex items-center gap-2">
+      <span class="label-caps text-3">Theme</span>
+      <div class="segmented" id="themeSeg">
+        <button class="seg active" data-theme="dark">Dark</button>
+        <button class="seg" data-theme="light">Light</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="label-caps text-3">Radius</span>
+      <div class="segmented" id="radiusSeg">
+        <button class="seg" data-radius="sharp">Sharp</button>
+        <button class="seg active" data-radius="">Medium</button>
+        <button class="seg" data-radius="round">Round</button>
+      </div>
+    </div>
+    <button class="btn btn--soft" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> Copy full CSS</button>
+  </div>
+</header>
+
+<!-- ── Content ─────────────────────────────────────────────────────────────── -->
+<main class="app-content">
+
+  <!-- Hero -->
+  <div class="mb-section reveal">
+    <span class="eyebrow">DriveSmart</span>
+    <h1 class="text-display mt-2">Design System</h1>
+    <p class="text-2 mt-3" style="max-width:64ch">Dark glassmorphism · DriveSmart-blue accent · zero build, zero framework. One <code class="text-mono text-1">drivesmart.css</code> carries the tokens, utilities, and every component below. Toggle theme &amp; roundness above — the whole UI re-derives from a handful of base hexes. Hit <span class="text-1">Show code</span> on any demo to copy the markup.</p>
+    <div class="flex gap-2 mt-4 flex-wrap">
+      <span class="badge">vanilla CSS</span>
+      <span class="badge badge--neutral">no React</span>
+      <span class="badge badge--neutral">no Tailwind</span>
+      <span class="badge badge--neutral">no build</span>
+      <span class="badge badge--success">light + dark</span>
+    </div>
+  </div>
+
+  <!-- ════ FOUNDATIONS ════ -->
+  <section class="gsection" id="foundations">
+    <header class="panel-head"><h2 class="text-headline-lg">Foundations</h2><span class="eyebrow">tokens</span></header>
+
+    <h3 class="text-headline-md gsub">Surfaces — elevation ladder</h3>
+    <div class="glass-card is-static">
+      <div class="swatch-grid">
+        <div class="swatch"><div class="chip" style="background:var(--surface-lowest)"></div><div class="meta"><div class="nm">surface-lowest</div><div class="vv">#0a0e14</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--surface)"></div><div class="meta"><div class="nm">surface</div><div class="vv">#0f1419</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--surface-low)"></div><div class="meta"><div class="nm">surface-low</div><div class="vv">#181c22</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--surface-container)"></div><div class="meta"><div class="nm">surface-container</div><div class="vv">#1c2026</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--surface-high)"></div><div class="meta"><div class="nm">surface-high</div><div class="vv">#262a30</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--surface-variant)"></div><div class="meta"><div class="nm">surface-variant</div><div class="vv">#31353b</div></div></div>
+      </div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Accent &amp; status</h3>
+    <div class="glass-card is-static">
+      <div class="swatch-grid">
+        <div class="swatch"><div class="chip" style="background:var(--primary)"></div><div class="meta"><div class="nm">primary</div><div class="vv">the one accent</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--primary-container)"></div><div class="meta"><div class="nm">primary-container</div><div class="vv">gradient end</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--success)"></div><div class="meta"><div class="nm">success</div><div class="vv">paid / positive</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--danger)"></div><div class="meta"><div class="nm">danger</div><div class="vv">unpaid / error</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--warning)"></div><div class="meta"><div class="nm">warning</div><div class="vv">pending</div></div></div>
+        <div class="swatch"><div class="chip" style="background:var(--idle)"></div><div class="meta"><div class="nm">idle</div><div class="vv">dead deal / draft</div></div></div>
+      </div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Typography</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <p class="text-display">Display 40 · Hanken</p>
+        <p class="text-headline-lg mt-3">Headline LG 28</p>
+        <p class="text-headline-md mt-3">Headline MD 20</p>
+        <p class="text-body mt-3">Body 14 — Inter. The quick brown fox jumps over 1,234 lazy dogs.</p>
+        <p class="text-sm text-2 mt-2">Small 13 secondary text.</p>
+        <p class="label-caps text-3 mt-3">Label · caps · mono eyebrow</p>
+        <p class="num text-1 mt-2" style="font-size:20px">$ 1,284,907.50</p>
+      </div>
+      <div class="demo-bar"><span class="name">type scale</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;p class="text-display"&gt;Display 40&lt;/p&gt;
+&lt;p class="text-headline-lg"&gt;Headline LG 28&lt;/p&gt;
+&lt;p class="text-headline-md"&gt;Headline MD 20&lt;/p&gt;
+&lt;p class="text-body"&gt;Body 14 — Inter&lt;/p&gt;
+&lt;p class="label-caps text-3"&gt;Label · caps · mono eyebrow&lt;/p&gt;
+&lt;p class="num"&gt;$ 1,284,907.50&lt;/p&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ BUTTONS ════ -->
+  <section class="gsection" id="buttons">
+    <header class="panel-head"><h2 class="text-headline-lg">Buttons</h2><span class="eyebrow">btn</span></header>
+
+    <h3 class="text-headline-md gsub">Variants — one loud CTA</h3>
+    <div class="demo glass-card is-static">
+      <div class="demo-preview">
+        <button class="btn btn--primary"><span class="material-symbols-outlined">sync</span> Primary</button>
+        <button class="btn btn--soft">Soft</button>
+        <button class="btn">Default</button>
+        <button class="btn btn--ghost">Ghost</button>
+        <button class="btn btn--icon"><span class="material-symbols-outlined">more_horiz</span></button>
+        <button class="btn btn--primary" disabled>Disabled</button>
+      </div>
+      <div class="demo-bar"><span class="name">btn--primary / --soft / (default) / --ghost / --icon</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code></code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Sizes</h3>
+    <div class="demo glass-card is-static">
+      <div class="demo-preview">
+        <button class="btn btn--primary btn--xs">XS</button>
+        <button class="btn btn--primary btn--sm">SM</button>
+        <button class="btn btn--primary">Default</button>
+        <button class="btn btn--primary btn--lg">Large</button>
+      </div>
+      <div class="demo-bar"><span class="name">btn--xs / --sm / (default) / --lg</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code></code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ SURFACES & KPI ════ -->
+  <section class="gsection" id="surfaces">
+    <header class="panel-head"><h2 class="text-headline-lg">Surfaces &amp; KPI</h2><span class="eyebrow">glass-card</span></header>
+
+    <h3 class="text-headline-md gsub">KPI tiles — a KPI is just a card</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="grid grid-4 gap-card">
+          <div class="glass-card card-mesh-primary p-5"><div class="metric text-primary" data-count="40231">0</div><div class="label-caps text-2 mt-2">Contracts</div></div>
+          <div class="glass-card card-mesh-success p-5"><div class="metric text-success" data-count="12847">0</div><div class="label-caps text-2 mt-2">Paid <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span>8%</span></div></div>
+          <div class="glass-card card-mesh-danger p-5"><div class="metric text-danger" data-count="3109">0</div><div class="label-caps text-2 mt-2">Unpaid</div></div>
+          <div class="glass-card card-mesh-warning p-5"><div class="metric text-warning" data-count="842">0</div><div class="label-caps text-2 mt-2">Pending</div></div>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">glass-card + card-mesh-* + metric + label-caps</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="glass-card card-mesh-success p-5"&gt;
+  &lt;div class="metric text-success" data-count="12847"&gt;0&lt;/div&gt;
+  &lt;div class="label-caps text-2 mt-2"&gt;
+    Paid &lt;span class="delta delta--up"&gt;
+      &lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt;8%&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- count-up.js animates [data-count] on scroll-into-view --&gt;</code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Mesh corner tints</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="grid grid-3 gap-card">
+          <div class="glass-card card-mesh-primary p-5"><span class="label-caps text-2">card-mesh-primary</span></div>
+          <div class="glass-card card-mesh-success p-5"><span class="label-caps text-2">card-mesh-success</span></div>
+          <div class="glass-card card-mesh-danger p-5"><span class="label-caps text-2">card-mesh-danger</span></div>
+          <div class="glass-card card-mesh-warning p-5"><span class="label-caps text-2">card-mesh-warning</span></div>
+          <div class="glass-card card-mesh-idle p-5"><span class="label-caps text-2">card-mesh-idle</span></div>
+          <div class="glass-card card-mesh-neutral p-5"><span class="label-caps text-2">card-mesh-neutral</span></div>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">card-mesh-{primary,success,danger,warning,idle,neutral}</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="glass-card card-mesh-primary p-5"&gt;…&lt;/div&gt;
+&lt;div class="glass-card card-mesh-success p-5"&gt;…&lt;/div&gt;
+&lt;div class="glass-card card-mesh-danger  p-5"&gt;…&lt;/div&gt;
+&lt;!-- also: -warning / -idle / -neutral. .is-static opts out of hover lift --&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ STATUS & TAGS ════ -->
+  <section class="gsection" id="status">
+    <header class="panel-head"><h2 class="text-headline-lg">Status &amp; Tags</h2><span class="eyebrow">chips · badges</span></header>
+
+    <h3 class="text-headline-md gsub">Status chips</h3>
+    <div class="demo glass-card is-static">
+      <div class="demo-preview">
+        <span class="status-chip status-chip--paid">Paid</span>
+        <span class="status-chip status-chip--unpaid">Unpaid</span>
+        <span class="status-chip status-chip--pending">Pending</span>
+        <span class="status-chip status-chip--cancelled">Cancelled</span>
+        <span class="status-chip status-chip--dead">Dead deal</span>
+      </div>
+      <div class="demo-bar"><span class="name">status-chip--{paid,unpaid,pending,cancelled,dead}</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code></code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Badges · tags · dealer pills · dots</h3>
+    <div class="demo glass-card is-static">
+      <div class="demo-preview">
+        <span class="badge">12</span>
+        <span class="badge badge--success">Active</span>
+        <span class="badge badge--danger">Overdue</span>
+        <span class="badge badge--neutral">Draft</span>
+        <span class="tag">v1.0</span>
+        <span class="tag">SUV</span>
+        <span class="dealer-pill active">Northgate <span class="count">128</span></span>
+        <span class="dealer-pill">Summit <span class="count">86</span></span>
+        <span class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Live</span></span>
+      </div>
+      <div class="demo-bar"><span class="name">badge(+--success/--danger/--neutral) · tag · dealer-pill · dot--live</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code></code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ FORMS ════ -->
+  <section class="gsection" id="forms">
+    <header class="panel-head"><h2 class="text-headline-lg">Forms</h2><span class="eyebrow">input · field</span></header>
+
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="grid grid-2 gap-5">
+          <div class="field">
+            <label class="field-label">Customer name <span class="req">*</span></label>
+            <input class="input" placeholder="Jane Rivera">
+            <span class="field-hint">As it appears on the contract.</span>
+          </div>
+          <div class="field is-invalid">
+            <label class="field-label">Email</label>
+            <input class="input" aria-invalid="true" value="not-an-email">
+            <span class="field-error"><span class="material-symbols-outlined">error</span> Enter a valid email.</span>
+          </div>
+          <div class="field">
+            <label class="field-label">Dealer</label>
+            <select class="select"><option>Northgate Auto</option><option>Summit Motors</option></select>
+          </div>
+          <div class="field">
+            <label class="field-label">Amount</label>
+            <div class="input-group"><span class="input-affix">$</span><input class="input" value="24,500"><span class="input-affix">USD</span></div>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-label">Notes</label>
+            <textarea class="textarea" placeholder="Add a note…"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Search</label>
+            <div class="search"><span class="material-symbols-outlined">search</span><input class="input" placeholder="Search contracts…"></div>
+          </div>
+          <div class="field">
+            <label class="field-label">Discount</label>
+            <input type="range" class="range" value="40">
+          </div>
+        </div>
+        <div class="flex items-center gap-5 flex-wrap mt-6">
+          <label class="flex items-center gap-2"><span class="switch"><input type="checkbox" checked><span class="track"></span></span> <span class="text-sm">Auto-sync</span></label>
+          <label class="flex items-center gap-2"><input type="checkbox" class="checkbox" checked> <span class="text-sm">Paid in full</span></label>
+          <label class="flex items-center gap-2"><input type="radio" name="r" class="radio" checked> <span class="text-sm">Monthly</span></label>
+          <label class="flex items-center gap-2"><input type="radio" name="r" class="radio"> <span class="text-sm">Annual</span></label>
+        </div>
+        <div class="flex items-center gap-3 mt-6">
+          <input class="input input--sm" placeholder="sm" style="max-width:120px">
+          <input class="input" placeholder="default" style="max-width:140px">
+          <input class="input input--lg" placeholder="lg" style="max-width:160px">
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">field · input · select · textarea · input-group · switch · checkbox · radio · range · search</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="field"&gt;
+  &lt;label class="field-label"&gt;Customer name &lt;span class="req"&gt;*&lt;/span&gt;&lt;/label&gt;
+  &lt;input class="input" placeholder="Jane Rivera"&gt;
+  &lt;span class="field-hint"&gt;As it appears on the contract.&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- invalid: aria-invalid on control OR .is-invalid on .field --&gt;
+&lt;div class="field is-invalid"&gt;
+  &lt;input class="input" aria-invalid="true"&gt;
+  &lt;span class="field-error"&gt;&lt;span class="material-symbols-outlined"&gt;error&lt;/span&gt; Enter a valid email.&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;div class="input-group"&gt;&lt;span class="input-affix"&gt;$&lt;/span&gt;&lt;input class="input"&gt;&lt;span class="input-affix"&gt;USD&lt;/span&gt;&lt;/div&gt;
+
+&lt;span class="switch"&gt;&lt;input type="checkbox" checked&gt;&lt;span class="track"&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;input type="checkbox" class="checkbox"&gt;  &lt;input type="radio" class="radio"&gt;
+&lt;input type="range" class="range"&gt;
+&lt;div class="search"&gt;&lt;span class="material-symbols-outlined"&gt;search&lt;/span&gt;&lt;input class="input"&gt;&lt;/div&gt;
+&lt;!-- sizes: input--sm / input--lg (same for select--*) --&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ DATA DISPLAY ════ -->
+  <section class="gsection" id="data">
+    <header class="panel-head"><h2 class="text-headline-lg">Data display</h2><span class="eyebrow">table · avatar · kv</span></header>
+
+    <h3 class="text-headline-md gsub">Avatars</h3>
+    <div class="demo glass-card is-static">
+      <div class="demo-preview">
+        <span class="avatar avatar--blue">JR</span>
+        <span class="avatar avatar--green">KO</span>
+        <span class="avatar avatar--violet">LT</span>
+        <span class="avatar avatar--amber">MP</span>
+        <span class="avatar avatar--gray">DS</span>
+        <span class="avatar avatar--sm avatar--blue">S</span>
+        <span class="avatar avatar--lg avatar--green">L</span>
+        <span class="avatar-group"><span class="avatar avatar--blue">A</span><span class="avatar avatar--green">B</span><span class="avatar avatar--violet">C</span><span class="avatar avatar--gray">+5</span></span>
+      </div>
+      <div class="demo-bar"><span class="name">avatar(+--sm/--lg, tones --blue/green/violet/amber/gray, avatar-group)</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code></code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Key-value · progress · delta</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <dl class="kv mb-6">
+          <div><dt class="k">Contract</dt><dd class="v num">#DS-40231</dd></div>
+          <div><dt class="k">Dealer</dt><dd class="v">Northgate Auto</dd></div>
+          <div><dt class="k">Amount</dt><dd class="v num">$24,500</dd></div>
+          <div><dt class="k">Status</dt><dd class="v"><span class="status-chip status-chip--paid">Paid</span></dd></div>
+        </dl>
+        <div class="flex flex-col gap-3" style="max-width:420px">
+          <div class="progress"><div class="progress-bar" style="width:72%"></div></div>
+          <div class="progress"><div class="progress-bar progress-bar--success" style="width:90%"></div></div>
+          <div class="progress"><div class="progress-bar progress-bar--danger" style="width:35%"></div></div>
+        </div>
+        <div class="flex items-center gap-4 mt-4">
+          <span class="num text-1" style="font-size:20px">$128,400</span>
+          <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span> 12.4%</span>
+          <span class="delta delta--down"><span class="material-symbols-outlined">trending_down</span> 3.1%</span>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">kv · progress(+--success/--danger) · delta--up/--down</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;dl class="kv"&gt;
+  &lt;div&gt;&lt;dt class="k"&gt;Amount&lt;/dt&gt;&lt;dd class="v num"&gt;$24,500&lt;/dd&gt;&lt;/div&gt;
+&lt;/dl&gt;
+
+&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width:72%"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="progress"&gt;&lt;div class="progress-bar progress-bar--success" style="width:90%"&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;span class="delta delta--up"&gt;&lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt; 12.4%&lt;/span&gt;</code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Sortable glass table</h3>
+    <div class="demo glass-card is-static overflow-hidden" data-manual style="padding:0">
+      <div class="panel-head" style="padding:18px 20px;margin:0">
+        <h3 class="text-headline-md">Contracts</h3>
+        <div class="segmented">
+          <button class="seg active">All</button><button class="seg">Paid</button><button class="seg">Unpaid</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="data-table" id="demoTable">
+          <thead><tr>
+            <th class="sortable" data-key="dealer">Dealer <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
+            <th>Customer</th>
+            <th class="num sortable sort-desc" data-key="amount">Amount <span class="material-symbols-outlined sort-icon">unfold_more</span></th>
+            <th>Status</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Northgate Auto</td><td>J. Rivera</td><td class="num" data-amount="24500">$24,500</td><td><span class="status-chip status-chip--paid">Paid</span></td></tr>
+            <tr><td>Summit Motors</td><td>K. Osei</td><td class="num" data-amount="18900">$18,900</td><td><span class="status-chip status-chip--unpaid">Unpaid</span></td></tr>
+            <tr><td>Coastline Cars</td><td>L. Tran</td><td class="num" data-amount="31250">$31,250</td><td><span class="status-chip status-chip--pending">Pending</span></td></tr>
+            <tr><td>Apex Motors</td><td>M. Park</td><td class="num" data-amount="9800">$9,800</td><td><span class="status-chip status-chip--dead">Dead deal</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex items-center justify-between" style="padding:14px 20px">
+        <span class="text-sm text-3">4 of 128</span>
+        <div class="pagination">
+          <button class="page-btn" disabled><span class="material-symbols-outlined">chevron_left</span></button>
+          <button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button>
+          <button class="page-btn"><span class="material-symbols-outlined">chevron_right</span></button>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">data-table(+sortable, num) · pagination · page-btn — click a sortable header</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;table class="data-table"&gt;
+  &lt;thead&gt;&lt;tr&gt;
+    &lt;th class="sortable"&gt;Dealer &lt;span class="material-symbols-outlined sort-icon"&gt;unfold_more&lt;/span&gt;&lt;/th&gt;
+    &lt;th class="num sortable sort-desc"&gt;Amount …&lt;/th&gt;
+  &lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Northgate Auto&lt;/td&gt;&lt;td class="num"&gt;$24,500&lt;/td&gt;…&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class="pagination"&gt;
+  &lt;button class="page-btn active"&gt;1&lt;/button&gt;&lt;button class="page-btn"&gt;2&lt;/button&gt;
+&lt;/div&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ NAVIGATION ════ -->
+  <section class="gsection" id="nav">
+    <header class="panel-head"><h2 class="text-headline-lg">Navigation</h2><span class="eyebrow">tabs · segmented</span></header>
+
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <nav class="breadcrumbs mb-6"><a href="#">Dashboard</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><a href="#">Contracts</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><span class="current">#40231</span></nav>
+
+        <div class="tabs mb-6">
+          <button class="tab active">Overview</button><button class="tab">Schedule</button><button class="tab">Documents</button><button class="tab">Activity</button>
+        </div>
+
+        <div class="flex items-center gap-4 flex-wrap mb-6">
+          <div class="segmented"><button class="seg active">Day</button><button class="seg">Week</button><button class="seg">Month</button></div>
+          <nav class="flex items-center gap-5">
+            <a class="topnav-link active" href="#">Sales</a><a class="topnav-link" href="#">Finance</a><a class="topnav-link" href="#">Ops</a>
+          </nav>
+        </div>
+
+        <div style="max-width:240px">
+          <a class="sidenav-link active" href="#"><span class="material-symbols-outlined">dashboard</span> Overview</a>
+          <a class="sidenav-link" href="#"><span class="material-symbols-outlined">description</span> Contracts</a>
+          <a class="sidenav-link" href="#"><span class="material-symbols-outlined">insights</span> Analytics</a>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">breadcrumbs · tabs/tab · segmented/seg · topnav-link · sidenav-link</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;nav class="breadcrumbs"&gt;&lt;a&gt;Dashboard&lt;/a&gt;&lt;span class="sep"&gt;…&lt;/span&gt;&lt;span class="current"&gt;#40231&lt;/span&gt;&lt;/nav&gt;
+
+&lt;div class="tabs"&gt;&lt;button class="tab active"&gt;Overview&lt;/button&gt;&lt;button class="tab"&gt;Schedule&lt;/button&gt;&lt;/div&gt;
+
+&lt;div class="segmented"&gt;&lt;button class="seg active"&gt;Day&lt;/button&gt;&lt;button class="seg"&gt;Week&lt;/button&gt;&lt;/div&gt;
+
+&lt;a class="sidenav-link active"&gt;&lt;span class="material-symbols-outlined"&gt;dashboard&lt;/span&gt; Overview&lt;/a&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ OVERLAYS ════ -->
+  <section class="gsection" id="overlays">
+    <header class="panel-head"><h2 class="text-headline-lg">Overlays</h2><span class="eyebrow">menu · modal · drawer</span></header>
+
+    <div class="flex gap-3 flex-wrap mb-6">
+      <button class="btn btn--soft" id="openModal"><span class="material-symbols-outlined">open_in_full</span> Open modal</button>
+      <button class="btn btn--soft" id="openDrawer"><span class="material-symbols-outlined">dock_to_left</span> Open drawer</button>
+      <button class="btn btn--soft" id="fireToast"><span class="material-symbols-outlined">notifications</span> Fire toast</button>
+    </div>
+
+    <div class="grid grid-2 gap-card">
+      <!-- menu -->
+      <div class="demo glass-card is-static" data-manual>
+        <div class="demo-preview block"><div class="stage">
+          <div class="menu">
+            <div class="menu-label">Actions</div>
+            <button class="menu-item"><span class="material-symbols-outlined">visibility</span> View</button>
+            <button class="menu-item"><span class="material-symbols-outlined">edit</span> Edit</button>
+            <div class="menu-sep"></div>
+            <button class="menu-item"><span class="material-symbols-outlined">delete</span> Delete</button>
+          </div>
+        </div></div>
+        <div class="demo-bar"><span class="name">menu · menu-item · menu-label · menu-sep</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+        <div class="demo-code"><pre><code>&lt;div class="menu"&gt;
+  &lt;div class="menu-label"&gt;Actions&lt;/div&gt;
+  &lt;button class="menu-item"&gt;&lt;span class="material-symbols-outlined"&gt;edit&lt;/span&gt; Edit&lt;/button&gt;
+  &lt;div class="menu-sep"&gt;&lt;/div&gt;
+  &lt;button class="menu-item"&gt;…&lt;/button&gt;
+&lt;/div&gt;</code></pre></div>
+      </div>
+
+      <!-- popover + tooltip + kbd -->
+      <div class="demo glass-card is-static" data-manual>
+        <div class="demo-preview block"><div class="stage" style="gap:14px">
+          <div class="popover">
+            <div class="label-caps text-3 mb-2">Quick view</div>
+            <div class="text-sm">Contract <span class="num text-1">#40231</span> · <span class="text-success">Paid</span></div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="btn btn--soft btn--sm has-tip" data-tip="I'm a tooltip">Hover me</button>
+            <span class="text-sm text-2">Press <span class="kbd">⌘</span><span class="kbd">K</span></span>
+          </div>
+        </div></div>
+        <div class="demo-bar"><span class="name">popover · has-tip[data-tip] · kbd</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+        <div class="demo-code"><pre><code>&lt;div class="popover"&gt;…&lt;/div&gt;
+&lt;button class="has-tip" data-tip="I'm a tooltip"&gt;Hover me&lt;/button&gt;
+&lt;span class="kbd"&gt;⌘&lt;/span&gt;&lt;span class="kbd"&gt;K&lt;/span&gt;</code></pre></div>
+      </div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Accordion</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="accordion" style="max-width:560px">
+          <details open><summary>What is the DriveSmart design system? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">One vanilla CSS file — tokens, utilities, and components. No framework.</div></details>
+          <details><summary>How do I theme it? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">Set <code class="text-mono">data-theme="light"</code> or <code class="text-mono">data-radius</code> on &lt;html&gt;.</div></details>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">accordion wraps native &lt;details&gt;</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="accordion"&gt;
+  &lt;details open&gt;
+    &lt;summary&gt;Question &lt;span class="material-symbols-outlined chev"&gt;expand_more&lt;/span&gt;&lt;/summary&gt;
+    &lt;div class="acc-body"&gt;Answer.&lt;/div&gt;
+  &lt;/details&gt;
+&lt;/div&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ FEEDBACK ════ -->
+  <section class="gsection" id="feedback">
+    <header class="panel-head"><h2 class="text-headline-lg">Feedback</h2><span class="eyebrow">alert · toast</span></header>
+
+    <h3 class="text-headline-md gsub">Alerts &amp; banner</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="flex flex-col gap-3">
+          <div class="alert alert--info"><span class="material-symbols-outlined">info</span><div>Sync runs every 15 minutes.</div></div>
+          <div class="alert alert--success"><span class="material-symbols-outlined">check_circle</span><div>Contract marked as paid.</div></div>
+          <div class="alert alert--warning"><span class="material-symbols-outlined">warning</span><div>3 contracts pending review.</div></div>
+          <div class="alert alert--danger"><span class="material-symbols-outlined">error</span><div>Payment failed — retry required.</div></div>
+          <div class="banner banner--warning"><span class="material-symbols-outlined">campaign</span><div>Sheet sync paused.</div><div class="banner-actions"><button class="btn btn--soft btn--xs">Resume</button></div></div>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">alert--{info,success,warning,danger} · banner(+--warning)</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="alert alert--success"&gt;
+  &lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;
+  &lt;div&gt;Contract marked as paid.&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="banner banner--warning"&gt;
+  &lt;span class="material-symbols-outlined"&gt;campaign&lt;/span&gt;
+  &lt;div&gt;Sheet sync paused.&lt;/div&gt;
+  &lt;div class="banner-actions"&gt;&lt;button class="btn btn--soft btn--xs"&gt;Resume&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></div>
+    </div>
+
+    <h3 class="text-headline-md gsub">Toast · skeleton · spinner · empty state</h3>
+    <div class="demo glass-card is-static" data-manual>
+      <div class="demo-preview block">
+        <div class="flex flex-col gap-3 mb-6" style="max-width:360px">
+          <div class="toast toast--success" style="animation:none"><span class="material-symbols-outlined">check_circle</span><div>Saved.</div></div>
+          <div class="toast toast--danger" style="animation:none"><span class="material-symbols-outlined">error</span><div>Something broke.</div></div>
+          <div class="toast toast--info" style="animation:none"><span class="material-symbols-outlined">info</span><div>Syncing…</div></div>
+        </div>
+        <div class="grid grid-2 gap-card">
+          <div class="glass-card is-static p-5">
+            <div class="skeleton skeleton--text" style="width:40%"></div>
+            <div class="skeleton" style="height:48px;margin:10px 0"></div>
+            <div class="skeleton skeleton--text" style="width:80%"></div>
+            <div class="skeleton skeleton--text" style="width:60%"></div>
+          </div>
+          <div class="glass-card is-static p-5 flex items-center justify-center"><span class="spinner"></span></div>
+        </div>
+        <div class="glass-card is-static mt-4">
+          <div class="empty-state">
+            <span class="material-symbols-outlined">inbox</span>
+            <h3 class="text-headline-md">No contracts yet</h3>
+            <p>Sync a sheet or add a contract to get started.</p>
+            <button class="btn btn--primary"><span class="material-symbols-outlined">add</span> New contract</button>
+          </div>
+        </div>
+      </div>
+      <div class="demo-bar"><span class="name">toast--{success,danger,info} · skeleton(+--text) · spinner · empty-state</span><button class="btn btn--ghost btn--xs toggle-code">Show code</button><button class="btn btn--ghost btn--xs copy-code">Copy</button></div>
+      <div class="demo-code"><pre><code>&lt;div class="toast-stack"&gt;
+  &lt;div class="toast toast--success"&gt;&lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;&lt;div&gt;Saved.&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="skeleton skeleton--text"&gt;&lt;/div&gt;
+&lt;span class="spinner"&gt;&lt;/span&gt;
+
+&lt;div class="empty-state"&gt;
+  &lt;span class="material-symbols-outlined"&gt;inbox&lt;/span&gt;
+  &lt;h3&gt;No contracts yet&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;
+  &lt;button class="btn btn--primary"&gt;New contract&lt;/button&gt;
+&lt;/div&gt;</code></pre></div>
+    </div>
+  </section>
+
+  <!-- ════ DATA VIZ ════ -->
+  <section class="gsection" id="viz">
+    <header class="panel-head"><h2 class="text-headline-lg">Data viz</h2><span class="eyebrow">Chart.js · DS_CHART</span></header>
+    <div class="glass-card is-static p-5">
+      <div class="grid grid-2 gap-card">
+        <div><div class="label-caps text-2 mb-3">Status mix</div><canvas id="chartDoughnut" height="220"></canvas></div>
+        <div><div class="label-caps text-2 mb-3">Monthly volume</div><canvas id="chartBar" height="220"></canvas></div>
+      </div>
+      <p class="text-sm text-3 mt-4">Charts pull their palette from the CSS tokens via <code class="text-mono text-2">chart-theme.js</code> → <code class="text-mono text-2">DS_CHART</code>. Toggle the theme above and reload to see them re-derive.</p>
+    </div>
+  </section>
+
+  <footer class="text-center text-3 text-sm" style="padding-top:24px;border-top:0.5px solid var(--hairline-soft)">
+    DriveSmart Design System · vanilla CSS · <a class="text-primary" href="https://github.com/DriveSmart-Tech/drivesmart-design" target="_blank" rel="noopener">source</a> · extracted from the Dealer Sales Payment Dashboard
+  </footer>
+</main>
+
+<!-- live overlays -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3 class="text-headline-md">Mark as paid</h3><button class="btn btn--icon" data-close-modal><span class="material-symbols-outlined">close</span></button></div>
+    <p class="text-2">Confirm contract <span class="num text-1">#40231</span> ($24,500) is paid in full. This updates the dealer ledger.</p>
+    <div class="flex justify-end gap-3 mt-6"><button class="btn btn--ghost" data-close-modal>Cancel</button><button class="btn btn--primary" data-close-modal>Confirm</button></div>
+  </div>
+</div>
+<div class="drawer-overlay hidden" id="drawerOverlay"></div>
+<aside class="drawer hidden" id="drawer">
+  <div class="drawer-head"><h3 class="text-headline-md">Filters</h3><button class="btn btn--icon" data-close-drawer><span class="material-symbols-outlined">close</span></button></div>
+  <div class="field mb-4"><label class="field-label">Dealer</label><select class="select"><option>All dealers</option><option>Northgate</option></select></div>
+  <div class="field mb-4"><label class="field-label">Status</label><select class="select"><option>Any</option><option>Paid</option><option>Unpaid</option></select></div>
+  <button class="btn btn--primary w-full" data-close-drawer>Apply</button>
+</aside>
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="count-up.js"></script>
+<script>
+(function () {
+  var docEl = document.documentElement;
+
+  /* ── theme + roundness toggles (persisted) ──────────────────────────────── */
+  function applyTheme(t) {
+    if (t === 'light') docEl.setAttribute('data-theme', 'light'); else docEl.removeAttribute('data-theme');
+    try { localStorage.setItem('ds-theme', t); } catch (e) {}
+    setActive('themeSeg', 'data-theme', t);
+  }
+  function applyRadius(r) {
+    if (r) docEl.setAttribute('data-radius', r); else docEl.removeAttribute('data-radius');
+    try { localStorage.setItem('ds-radius', r); } catch (e) {}
+    setActive('radiusSeg', 'data-radius', r);
+  }
+  function setActive(segId, attr, val) {
+    var segs = document.querySelectorAll('#' + segId + ' .seg');
+    segs.forEach(function (b) { b.classList.toggle('active', (b.getAttribute(attr) || '') === (val || '')); });
+  }
+  document.getElementById('themeSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('.seg'); if (b) applyTheme(b.getAttribute('data-theme'));
+  });
+  document.getElementById('radiusSeg').addEventListener('click', function (e) {
+    var b = e.target.closest('.seg'); if (b) applyRadius(b.getAttribute('data-radius'));
+  });
+  try {
+    applyTheme(localStorage.getItem('ds-theme') || 'dark');
+    applyRadius(localStorage.getItem('ds-radius') || '');
+  } catch (e) { applyTheme('dark'); applyRadius(''); }
+
+  /* ── auto-fill code blocks from the rendered preview (no duplication) ────── */
+  function dedent(s) {
+    s = s.replace(/^\s*\n/, '').replace(/\s+$/, '');
+    var lines = s.split('\n');
+    var indents = lines.filter(function (l) { return l.trim(); })
+                       .map(function (l) { return l.match(/^[ \t]*/)[0].length; });
+    var min = indents.length ? Math.min.apply(null, indents) : 0;
+    return lines.map(function (l) { return l.slice(min); }).join('\n');
+  }
+  document.querySelectorAll('.demo').forEach(function (demo) {
+    var pre = demo.querySelector('.demo-code code');
+    var preview = demo.querySelector('.demo-preview');
+    if (pre && preview && !pre.textContent.trim()) {
+      pre.textContent = dedent(preview.innerHTML);
+    }
+  });
+
+  /* ── show/hide + copy per-demo ──────────────────────────────────────────── */
+  function flash(btn, msg) {
+    var old = btn.textContent; btn.textContent = msg; btn.classList.add('copied');
+    setTimeout(function () { btn.textContent = old; btn.classList.remove('copied'); }, 1400);
+  }
+  function copy(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta);
+    return Promise.resolve();
+  }
+  document.querySelectorAll('.toggle-code').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var demo = btn.closest('.demo'); var open = demo.classList.toggle('open');
+      btn.textContent = open ? 'Hide code' : 'Show code';
+    });
+  });
+  document.querySelectorAll('.copy-code').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var code = btn.closest('.demo').querySelector('.demo-code code');
+      copy(code.textContent).then(function () { flash(btn, 'Copied'); });
+    });
+  });
+
+  /* ── copy full CSS ──────────────────────────────────────────────────────── */
+  document.getElementById('copyCssBtn').addEventListener('click', function () {
+    var btn = this;
+    fetch('drivesmart.css').then(function (r) { return r.text(); })
+      .then(function (css) { return copy(css); })
+      .then(function () { flash(btn.querySelector('span:last-child') || btn, 'Copied!'); })
+      .catch(function () { flash(btn, 'Open over http to copy'); });
+  });
+
+  /* ── sortable demo table ────────────────────────────────────────────────── */
+  var table = document.getElementById('demoTable');
+  if (table) {
+    table.querySelectorAll('th.sortable').forEach(function (th, idx) {
+      th.addEventListener('click', function () {
+        var asc = !th.classList.contains('sort-asc');
+        table.querySelectorAll('th.sortable').forEach(function (h) { h.classList.remove('sort-asc', 'sort-desc'); });
+        th.classList.add(asc ? 'sort-asc' : 'sort-desc');
+        var tbody = table.tBodies[0];
+        var rows = Array.prototype.slice.call(tbody.rows);
+        var ci = th.cellIndex;
+        rows.sort(function (a, b) {
+          var av = a.cells[ci].getAttribute('data-amount'), bv = b.cells[ci].getAttribute('data-amount');
+          if (av !== null && bv !== null) { av = +av; bv = +bv; }
+          else { av = a.cells[ci].textContent.trim(); bv = b.cells[ci].textContent.trim(); }
+          return (av < bv ? -1 : av > bv ? 1 : 0) * (asc ? 1 : -1);
+        });
+        rows.forEach(function (r) { tbody.appendChild(r); });
+      });
+    });
+  }
+
+  /* ── live overlays ──────────────────────────────────────────────────────── */
+  function show(el) { el.classList.remove('hidden'); }
+  function hide(el) { el.classList.add('hidden'); }
+  var modalOverlay = document.getElementById('modalOverlay');
+  document.getElementById('openModal').addEventListener('click', function () { show(modalOverlay); });
+  modalOverlay.addEventListener('click', function (e) { if (e.target === modalOverlay || e.target.closest('[data-close-modal]')) hide(modalOverlay); });
+
+  var drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay');
+  document.getElementById('openDrawer').addEventListener('click', function () { show(drawer); show(drawerOverlay); });
+  function closeDrawer() { hide(drawer); hide(drawerOverlay); }
+  drawerOverlay.addEventListener('click', closeDrawer);
+  drawer.addEventListener('click', function (e) { if (e.target.closest('[data-close-drawer]')) closeDrawer(); });
+
+  var toastStack = document.getElementById('toastStack'), toastN = 0;
+  document.getElementById('fireToast').addEventListener('click', function () {
+    var kinds = [['success', 'check_circle', 'Contract saved.'], ['info', 'info', 'Sync started.'], ['danger', 'error', 'Sync failed — retry.']];
+    var k = kinds[toastN++ % kinds.length];
+    var t = document.createElement('div');
+    t.className = 'toast toast--' + k[0];
+    t.innerHTML = '<span class="material-symbols-outlined">' + k[1] + '</span><div>' + k[2] + '</div>';
+    toastStack.appendChild(t);
+    setTimeout(function () { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2600);
+  });
+
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { hide(modalOverlay); closeDrawer(); } });
+
+  /* ── sidebar active-link on scroll ──────────────────────────────────────── */
+  var links = document.querySelectorAll('.app-sidebar .sidenav-link[href^="#"]');
+  var sections = Array.prototype.map.call(links, function (l) { return document.querySelector(l.getAttribute('href')); });
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          links.forEach(function (l) { l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id); });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(function (s) { if (s) obs.observe(s); });
+  }
+
+  /* ── charts (after chart.js + chart-theme.js load) ──────────────────────── */
+  function drawCharts() {
+    if (typeof Chart === 'undefined' || !window.DS_CHART) { return setTimeout(drawCharts, 120); }
+    var d = window.DS_CHART;
+    new Chart(document.getElementById('chartDoughnut'), {
+      type: 'doughnut',
+      data: { labels: ['Paid', 'Unpaid', 'Pending', 'Dead'],
+        datasets: [{ data: [12847, 3109, 842, 410], backgroundColor: [d.statusColor('paid'), d.statusColor('unpaid'), d.statusColor('pending'), d.statusColor('dead')], borderWidth: 0 }] },
+      options: { cutout: '64%', plugins: { legend: { position: 'bottom' } } }
+    });
+    new Chart(document.getElementById('chartBar'), {
+      type: 'bar',
+      data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{ label: 'Volume', data: [320, 410, 380, 520, 470, 610], backgroundColor: d.palette.primary, borderRadius: 6, maxBarThickness: 28 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: d.axis, y: d.axis } }
+    });
+  }
+  if (document.readyState === 'complete') drawCharts();
+  else window.addEventListener('load', drawCharts);
+})();
+</script>
+<script src="chart-theme.js" defer></script>
+</body>
+</html>
