@@ -39,7 +39,7 @@
   .searchbar .sb-hint { margin-left: auto; display: inline-flex; gap: 3px; }
 
   /* content + component blocks --------------------------------------------- */
-  .app-content { padding: 24px 36px 120px; max-width: 980px; }
+  .app-content { padding: 24px 40px 120px; max-width: 1000px; margin-left: auto; margin-right: auto; }
   .group-title { scroll-margin-top: 80px; margin: 46px 0 6px; padding-top: 18px; border-top: 0.5px solid var(--hairline-soft); }
   .group-title:first-of-type { border-top: none; padding-top: 0; margin-top: 8px; }
   .comp { scroll-margin-top: 80px; margin-top: 30px; }
@@ -47,12 +47,13 @@
   .comp-desc { color: var(--text-2); font-size: 13px; margin-top: 5px; max-width: 72ch; }
   .comp-preview { padding: 30px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 14px; }
   .comp-preview.block { display: block; }
-  .comp-code { margin-top: 12px; border-radius: var(--r-xl); overflow: hidden; border: 0.5px solid var(--glass-border);
-    background: color-mix(in srgb, var(--surface-low) 86%, transparent); }
-  .comp-code-bar { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px 7px 14px; border-bottom: 0.5px solid var(--hairline-soft); }
-  .comp-code-bar .lang { font-family: var(--f-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); }
-  .comp-code pre { margin: 0; padding: 15px 16px; overflow-x: auto; background: none; }
+  .comp-code { position: relative; margin-top: 10px; }
+  .comp-code pre { margin: 0; padding: 14px 16px; overflow-x: auto; border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--surface-lowest) 55%, transparent); }
   .comp-code code { font-family: var(--f-mono); font-size: 12.5px; line-height: 1.7; white-space: pre; }
+  /* copy: subtle, hover-revealed — no toolbar chrome */
+  .comp-copy { position: absolute; top: 7px; right: 7px; opacity: 0; transition: opacity .15s; }
+  .comp-code:hover .comp-copy, .comp-copy:focus-visible { opacity: 1; }
 
   /* swatches + radius demo ------------------------------------------------- */
   .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 26px; }
@@ -65,7 +66,6 @@
   .rad-box { width: 78px; height: 78px; background: var(--primary-ghost); border: 0.5px solid var(--primary-line); }
 
   .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 45%, transparent); width: 100%; }
-  .copy-code { cursor: pointer; }
   .copied { color: var(--success) !important; }
 
   /* command palette -------------------------------------------------------- */
@@ -232,7 +232,7 @@
       <div class="swatch"><div class="chip" style="background:var(--warning)"></div><div class="meta"><div class="nm">warning</div><div class="vv">pending</div></div></div>
       <div class="swatch"><div class="chip" style="background:var(--idle)"></div><div class="meta"><div class="nm">idle</div><div class="vv">dead deal</div></div></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">css</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-css">background: var(--surface-container);
+    <div class="comp-code"><pre><code class="language-css">background: var(--surface-container);
 color: var(--primary);
 border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></pre></div>
   </article>
@@ -248,28 +248,22 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <p class="label-caps text-3 mt-3">Label · caps · mono eyebrow</p>
       <p class="num text-1 mt-2" style="font-size:20px">$ 1,284,907.50</p>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;p class="text-display"&gt;Display 40&lt;/p&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;p class="text-display"&gt;Display 40&lt;/p&gt;
 &lt;p class="text-headline-lg"&gt;Headline LG 28&lt;/p&gt;
 &lt;p class="label-caps text-3"&gt;Label · caps · mono eyebrow&lt;/p&gt;
 &lt;p class="num"&gt;$ 1,284,907.50&lt;/p&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="radius">
-    <div class="comp-head"><h3>Radius</h3><p class="comp-desc">Five radius tokens. Set <code class="text-mono">data-radius="sharp|round"</code> on <code class="text-mono">&lt;html&gt;</code> to re-round the entire UI — try the scale switch below and watch every component change.</p></div>
+    <div class="comp-head"><h3>Radius</h3><p class="comp-desc">Five radius tokens. Set <code class="text-mono">data-radius="sharp|round"</code> on <code class="text-mono">&lt;html&gt;</code> to re-round the entire UI — every component reads these radius tokens.</p></div>
     <div class="glass-card is-static comp-preview">
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-sm)"></div><span class="label-caps text-3">r-sm</span></div>
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-lg)"></div><span class="label-caps text-3">r-lg</span></div>
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-xl)"></div><span class="label-caps text-3">r-xl</span></div>
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-2xl)"></div><span class="label-caps text-3">r-2xl</span></div>
       <div class="rad-demo"><div class="rad-box" style="border-radius:var(--r-full)"></div><span class="label-caps text-3">r-full</span></div>
-      <div class="rad-demo" style="margin-left:auto">
-        <span class="label-caps text-3">Global scale</span>
-        <div class="segmented" id="radiusSeg">
-          <button class="seg" data-radius="sharp">Sharp</button><button class="seg active" data-radius="">Medium</button><button class="seg" data-radius="round">Round</button>
-        </div>
-      </div>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;html data-radius="round"&gt;   &lt;!-- sharp | (default) | round --&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;html data-radius="round"&gt;   &lt;!-- sharp | (default) | round --&gt;
 &lt;div style="border-radius: var(--r-lg)"&gt;…&lt;/div&gt;
 &lt;!-- utilities: .rounded .rounded-lg .rounded-xl .rounded-2xl .rounded-full --&gt;</code></pre></div>
   </article>
@@ -280,7 +274,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="glass-card p-6" style="width:220px"><span class="label-caps text-2">glass-card</span><p class="text-sm text-3 mt-2">Hover me — lifts</p></div>
       <div class="glass-card is-static p-6" style="width:220px"><span class="label-caps text-2">.is-static</span><p class="text-sm text-3 mt-2">No hover lift</p></div>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <!-- ══════════ ACTIONS ══════════ -->
@@ -302,7 +296,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <button class="btn btn--primary">Default</button>
       <button class="btn btn--primary btn--lg">Large</button>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <!-- ══════════ SURFACES ══════════ -->
@@ -315,7 +309,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="glass-card p-6"><span class="label-caps text-2">Card</span><p class="text-sm text-3 mt-2">Lifts on hover.</p></div>
       <div class="glass-card p-6"><span class="label-caps text-2">Card</span><p class="text-sm text-3 mt-2">Blue glow shadow.</p></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card p-6"&gt;…&lt;/div&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="glass-card p-6"&gt;…&lt;/div&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="kpi">
@@ -326,7 +320,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="glass-card card-mesh-danger p-5"><div class="metric text-danger" data-count="3109">0</div><div class="label-caps text-2 mt-2">Unpaid</div></div>
       <div class="glass-card card-mesh-warning p-5"><div class="metric text-warning" data-count="842">0</div><div class="label-caps text-2 mt-2">Pending</div></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card card-mesh-success p-5"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="glass-card card-mesh-success p-5"&gt;
   &lt;div class="metric text-success" data-count="12847"&gt;0&lt;/div&gt;
   &lt;div class="label-caps text-2 mt-2"&gt;Paid&lt;/div&gt;
 &lt;/div&gt;</code></pre></div>
@@ -342,7 +336,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="glass-card card-mesh-idle p-5"><span class="label-caps text-2">idle</span></div>
       <div class="glass-card card-mesh-neutral p-5"><span class="label-caps text-2">neutral</span></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="glass-card card-mesh-primary p-5"&gt;…&lt;/div&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="glass-card card-mesh-primary p-5"&gt;…&lt;/div&gt;
 &lt;!-- card-mesh-{primary,success,danger,warning,idle,neutral} --&gt;</code></pre></div>
   </article>
 
@@ -358,7 +352,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <span class="status-chip status-chip--cancelled">Cancelled</span>
       <span class="status-chip status-chip--dead">Dead deal</span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <article class="comp" id="badges">
@@ -366,7 +360,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
     <div class="glass-card is-static comp-preview">
       <span class="badge">12</span><span class="badge badge--success">Active</span><span class="badge badge--danger">Overdue</span><span class="badge badge--neutral">Draft</span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <article class="comp" id="tags">
@@ -374,7 +368,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
     <div class="glass-card is-static comp-preview">
       <span class="tag">v1.0</span><span class="tag">SUV</span><span class="tag">Finance</span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <article class="comp" id="dealer-pills">
@@ -384,7 +378,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <span class="dealer-pill">Summit <span class="count">86</span></span>
       <span class="dealer-pill">Coastline <span class="count">54</span></span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <article class="comp" id="dots">
@@ -393,7 +387,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <span class="flex items-center gap-2"><span class="dot dot--live"></span><span class="eyebrow">Live</span></span>
       <span class="flex items-center gap-2"><span class="dot dot--primary animate-pulse"></span><span class="eyebrow">Syncing</span></span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <!-- ══════════ FORMS ══════════ -->
@@ -411,7 +405,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
         <input class="input" aria-invalid="true" value="invalid">
       </div>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;input class="input" placeholder="Default"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;input class="input" placeholder="Default"&gt;
 &lt;input class="input input--lg" placeholder="Large"&gt;
 &lt;select class="select"&gt;&lt;option&gt;Northgate Auto&lt;/option&gt;&lt;/select&gt;
 &lt;input class="input" aria-invalid="true"&gt;   &lt;!-- error ring --&gt;</code></pre></div>
@@ -420,7 +414,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="textarea">
     <div class="comp-head"><h3>Textarea</h3><p class="comp-desc">Vertically resizable glass field.</p></div>
     <div class="glass-card is-static comp-preview block"><textarea class="textarea" placeholder="Add a note…"></textarea></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;textarea class="textarea" placeholder="Add a note…"&gt;&lt;/textarea&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;textarea class="textarea" placeholder="Add a note…"&gt;&lt;/textarea&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="field">
@@ -437,7 +431,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
         <span class="field-error"><span class="material-symbols-outlined">error</span> Enter a valid email.</span>
       </div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="field"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="field"&gt;
   &lt;label class="field-label"&gt;Customer name &lt;span class="req"&gt;*&lt;/span&gt;&lt;/label&gt;
   &lt;input class="input"&gt;
   &lt;span class="field-hint"&gt;As it appears on the contract.&lt;/span&gt;
@@ -447,7 +441,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="input-group">
     <div class="comp-head"><h3>Input group</h3><p class="comp-desc">Prefix / suffix affixes around an input.</p></div>
     <div class="glass-card is-static comp-preview block" style="max-width:320px"><div class="input-group"><span class="input-affix">$</span><input class="input" value="24,500"><span class="input-affix">USD</span></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="input-group"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="input-group"&gt;
   &lt;span class="input-affix"&gt;$&lt;/span&gt;
   &lt;input class="input" value="24,500"&gt;
   &lt;span class="input-affix"&gt;USD&lt;/span&gt;
@@ -462,7 +456,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <label class="flex items-center gap-2"><input type="radio" name="rr" class="radio" checked> <span class="text-sm">Monthly</span></label>
       <label class="flex items-center gap-2"><input type="radio" name="rr" class="radio"> <span class="text-sm">Annual</span></label>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="switch"&gt;&lt;input type="checkbox" checked&gt;&lt;span class="track"&gt;&lt;/span&gt;&lt;/span&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;span class="switch"&gt;&lt;input type="checkbox" checked&gt;&lt;span class="track"&gt;&lt;/span&gt;&lt;/span&gt;
 &lt;input type="checkbox" class="checkbox"&gt;
 &lt;input type="radio" class="radio"&gt;</code></pre></div>
   </article>
@@ -470,13 +464,13 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="range">
     <div class="comp-head"><h3>Range</h3><p class="comp-desc">Glowing-thumb slider.</p></div>
     <div class="glass-card is-static comp-preview block" style="max-width:360px"><input type="range" class="range" value="40"></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;input type="range" class="range" value="40"&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;input type="range" class="range" value="40"&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="search">
     <div class="comp-head"><h3>Search field</h3><p class="comp-desc">Icon-prefixed input wrapper.</p></div>
     <div class="glass-card is-static comp-preview block" style="max-width:360px"><div class="search"><span class="material-symbols-outlined">search</span><input class="input" placeholder="Search contracts…"></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="search"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="search"&gt;
   &lt;span class="material-symbols-outlined"&gt;search&lt;/span&gt;
   &lt;input class="input" placeholder="Search…"&gt;
 &lt;/div&gt;</code></pre></div>
@@ -492,7 +486,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <span class="avatar avatar--sm avatar--blue">S</span><span class="avatar avatar--lg avatar--green">L</span>
       <span class="avatar-group"><span class="avatar avatar--blue">A</span><span class="avatar avatar--green">B</span><span class="avatar avatar--violet">C</span><span class="avatar avatar--gray">+5</span></span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <article class="comp" id="kv">
@@ -503,7 +497,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div><dt class="k">Amount</dt><dd class="v num">$24,500</dd></div>
       <div><dt class="k">Status</dt><dd class="v"><span class="status-chip status-chip--paid">Paid</span></dd></div>
     </dl></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;dl class="kv"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;dl class="kv"&gt;
   &lt;div&gt;&lt;dt class="k"&gt;Amount&lt;/dt&gt;&lt;dd class="v num"&gt;$24,500&lt;/dd&gt;&lt;/div&gt;
 &lt;/dl&gt;</code></pre></div>
   </article>
@@ -515,7 +509,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="progress"><div class="progress-bar progress-bar--success" style="width:90%"></div></div>
       <div class="progress"><div class="progress-bar progress-bar--danger" style="width:35%"></div></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width:72%"&gt;&lt;/div&gt;&lt;/div&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="progress"&gt;&lt;div class="progress-bar" style="width:72%"&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;div class="progress"&gt;&lt;div class="progress-bar progress-bar--success" style="width:90%"&gt;&lt;/div&gt;&lt;/div&gt;</code></pre></div>
   </article>
 
@@ -526,7 +520,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <span class="delta delta--up"><span class="material-symbols-outlined">trending_up</span> 12.4%</span>
       <span class="delta delta--down"><span class="material-symbols-outlined">trending_down</span> 3.1%</span>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="delta delta--up"&gt;&lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt; 12.4%&lt;/span&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;span class="delta delta--up"&gt;&lt;span class="material-symbols-outlined"&gt;trending_up&lt;/span&gt; 12.4%&lt;/span&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="table">
@@ -547,7 +541,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
         </tbody>
       </table>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;table class="data-table"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;table class="data-table"&gt;
   &lt;thead&gt;&lt;tr&gt;
     &lt;th class="sortable"&gt;Dealer&lt;/th&gt;
     &lt;th class="num sortable"&gt;Amount&lt;/th&gt;
@@ -565,7 +559,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button>
       <button class="page-btn"><span class="material-symbols-outlined">chevron_right</span></button>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup"></code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup"></code></pre></div>
   </article>
 
   <!-- ══════════ NAVIGATION ══════════ -->
@@ -574,7 +568,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="breadcrumbs">
     <div class="comp-head"><h3>Breadcrumbs</h3></div>
     <div class="glass-card is-static comp-preview"><nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><a href="#">Contracts</a><span class="sep"><span class="material-symbols-outlined">chevron_right</span></span><span class="current">#40231</span></nav></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;nav class="breadcrumbs"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;nav class="breadcrumbs"&gt;
   &lt;a&gt;Dashboard&lt;/a&gt;&lt;span class="sep"&gt;…&lt;/span&gt;&lt;span class="current"&gt;#40231&lt;/span&gt;
 &lt;/nav&gt;</code></pre></div>
   </article>
@@ -582,13 +576,13 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="tabs">
     <div class="comp-head"><h3>Tabs</h3></div>
     <div class="glass-card is-static comp-preview block"><div class="tabs"><button class="tab active">Overview</button><button class="tab">Schedule</button><button class="tab">Documents</button><button class="tab">Activity</button></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="tabs"&gt;&lt;button class="tab active"&gt;Overview&lt;/button&gt;&lt;button class="tab"&gt;Schedule&lt;/button&gt;&lt;/div&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="tabs"&gt;&lt;button class="tab active"&gt;Overview&lt;/button&gt;&lt;button class="tab"&gt;Schedule&lt;/button&gt;&lt;/div&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="segmented">
     <div class="comp-head"><h3>Segmented</h3></div>
     <div class="glass-card is-static comp-preview"><div class="segmented"><button class="seg active">Day</button><button class="seg">Week</button><button class="seg">Month</button></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="segmented"&gt;&lt;button class="seg active"&gt;Day&lt;/button&gt;&lt;button class="seg"&gt;Week&lt;/button&gt;&lt;/div&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="segmented"&gt;&lt;button class="seg active"&gt;Day&lt;/button&gt;&lt;button class="seg"&gt;Week&lt;/button&gt;&lt;/div&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="sidenav">
@@ -598,13 +592,13 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <a class="sidenav-link" href="#"><span class="material-symbols-outlined">description</span> Contracts</a>
       <a class="sidenav-link" href="#"><span class="material-symbols-outlined">insights</span> Analytics</a>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;a class="sidenav-link active"&gt;&lt;span class="material-symbols-outlined"&gt;dashboard&lt;/span&gt; Overview&lt;/a&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;a class="sidenav-link active"&gt;&lt;span class="material-symbols-outlined"&gt;dashboard&lt;/span&gt; Overview&lt;/a&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="topnav">
     <div class="comp-head"><h3>Topnav</h3><p class="comp-desc">Underline nav link.</p></div>
     <div class="glass-card is-static comp-preview"><nav class="flex items-center gap-5"><a class="topnav-link active" href="#">Sales</a><a class="topnav-link" href="#">Finance</a><a class="topnav-link" href="#">Ops</a></nav></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;a class="topnav-link active"&gt;Sales&lt;/a&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;a class="topnav-link active"&gt;Sales&lt;/a&gt;</code></pre></div>
   </article>
 
   <!-- ══════════ OVERLAYS ══════════ -->
@@ -619,7 +613,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="menu-sep"></div>
       <button class="menu-item"><span class="material-symbols-outlined">delete</span> Delete</button>
     </div></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="menu"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="menu"&gt;
   &lt;div class="menu-label"&gt;Actions&lt;/div&gt;
   &lt;button class="menu-item"&gt;&lt;span class="material-symbols-outlined"&gt;edit&lt;/span&gt; Edit&lt;/button&gt;
   &lt;div class="menu-sep"&gt;&lt;/div&gt;
@@ -629,7 +623,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="modal">
     <div class="comp-head"><h3>Modal</h3><p class="comp-desc">Centered dialog over a dimmed overlay. Toggle <code class="text-mono">.hidden</code> on the overlay to show/hide.</p></div>
     <div class="comp-preview"><button class="btn btn--soft" id="openModal"><span class="material-symbols-outlined">open_in_full</span> Open modal</button></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="modal-overlay"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="modal-overlay"&gt;
   &lt;div class="modal"&gt;
     &lt;div class="modal-head"&gt;&lt;h3&gt;Mark as paid&lt;/h3&gt;&lt;button class="btn btn--icon"&gt;✕&lt;/button&gt;&lt;/div&gt;
     &lt;p&gt;…&lt;/p&gt;
@@ -641,7 +635,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="drawer">
     <div class="comp-head"><h3>Drawer</h3><p class="comp-desc">Slide-over panel (right by default; <code class="text-mono">.drawer--left</code> for left).</p></div>
     <div class="comp-preview"><button class="btn btn--soft" id="openDrawer"><span class="material-symbols-outlined">dock_to_left</span> Open drawer</button></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="drawer-overlay"&gt;&lt;/div&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="drawer-overlay"&gt;&lt;/div&gt;
 &lt;aside class="drawer"&gt;
   &lt;div class="drawer-head"&gt;&lt;h3&gt;Filters&lt;/h3&gt;&lt;button class="btn btn--icon"&gt;✕&lt;/button&gt;&lt;/div&gt;
   …
@@ -654,13 +648,13 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="label-caps text-3 mb-2">Quick view</div>
       <div class="text-sm">Contract <span class="num text-1">#40231</span> · <span class="text-success">Paid</span></div>
     </div></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="popover"&gt;…&lt;/div&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="popover"&gt;…&lt;/div&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="tooltip">
     <div class="comp-head"><h3>Tooltip</h3><p class="comp-desc">CSS-only via <code class="text-mono">data-tip</code>.</p></div>
     <div class="glass-card is-static comp-preview"><button class="btn btn--soft btn--sm has-tip" data-tip="I'm a tooltip">Hover me</button></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;button class="has-tip" data-tip="I'm a tooltip"&gt;Hover me&lt;/button&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;button class="has-tip" data-tip="I'm a tooltip"&gt;Hover me&lt;/button&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="accordion">
@@ -669,7 +663,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <details open><summary>What is the DriveSmart design system? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">One vanilla CSS file — tokens, utilities, and components. No framework.</div></details>
       <details><summary>How do I theme it? <span class="material-symbols-outlined chev">expand_more</span></summary><div class="acc-body">Set <code class="text-mono">data-theme="light"</code> or <code class="text-mono">data-radius</code> on &lt;html&gt;.</div></details>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="accordion"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="accordion"&gt;
   &lt;details open&gt;
     &lt;summary&gt;Question &lt;span class="material-symbols-outlined chev"&gt;expand_more&lt;/span&gt;&lt;/summary&gt;
     &lt;div class="acc-body"&gt;Answer.&lt;/div&gt;
@@ -680,7 +674,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="kbd">
     <div class="comp-head"><h3>Keycap</h3><p class="comp-desc">Keyboard hint with a physical bottom edge.</p></div>
     <div class="glass-card is-static comp-preview"><span class="text-sm text-2">Press <span class="kbd">⌘</span><span class="kbd">K</span> · <span class="kbd">esc</span> · <span class="kbd">↵</span></span></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="kbd"&gt;⌘&lt;/span&gt;&lt;span class="kbd"&gt;K&lt;/span&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;span class="kbd"&gt;⌘&lt;/span&gt;&lt;span class="kbd"&gt;K&lt;/span&gt;</code></pre></div>
   </article>
 
   <!-- ══════════ FEEDBACK ══════════ -->
@@ -694,7 +688,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="alert alert--warning"><span class="material-symbols-outlined">warning</span><div>3 contracts pending review.</div></div>
       <div class="alert alert--danger"><span class="material-symbols-outlined">error</span><div>Payment failed — retry required.</div></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="alert alert--success"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="alert alert--success"&gt;
   &lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;
   &lt;div&gt;Contract marked as paid.&lt;/div&gt;
 &lt;/div&gt;</code></pre></div>
@@ -703,7 +697,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
   <article class="comp" id="banner">
     <div class="comp-head"><h3>Banner</h3><p class="comp-desc">Page-level notice with actions.</p></div>
     <div class="comp-preview block"><div class="banner banner--warning"><span class="material-symbols-outlined">campaign</span><div>Sheet sync paused.</div><div class="banner-actions"><button class="btn btn--soft btn--xs">Resume</button></div></div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="banner banner--warning"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="banner banner--warning"&gt;
   &lt;span class="material-symbols-outlined"&gt;campaign&lt;/span&gt;
   &lt;div&gt;Sheet sync paused.&lt;/div&gt;
   &lt;div class="banner-actions"&gt;&lt;button class="btn btn--soft btn--xs"&gt;Resume&lt;/button&gt;&lt;/div&gt;
@@ -717,7 +711,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="toast toast--success" style="animation:none"><span class="material-symbols-outlined">check_circle</span><div>Saved.</div></div>
       <div class="toast toast--info" style="animation:none"><span class="material-symbols-outlined">info</span><div>Syncing…</div></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="toast-stack"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="toast-stack"&gt;
   &lt;div class="toast toast--success"&gt;&lt;span class="material-symbols-outlined"&gt;check_circle&lt;/span&gt;&lt;div&gt;Saved.&lt;/div&gt;&lt;/div&gt;
 &lt;/div&gt;</code></pre></div>
   </article>
@@ -730,14 +724,14 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div class="skeleton skeleton--text" style="width:80%"></div>
       <div class="skeleton skeleton--text" style="width:60%"></div>
     </div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="skeleton skeleton--text"&gt;&lt;/div&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="skeleton skeleton--text"&gt;&lt;/div&gt;
 &lt;div class="skeleton" style="height:48px"&gt;&lt;/div&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="spinner">
     <div class="comp-head"><h3>Spinner</h3></div>
     <div class="glass-card is-static comp-preview"><span class="spinner"></span></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;span class="spinner"&gt;&lt;/span&gt;</code></pre></div>
+    <div class="comp-code"><pre><code class="language-markup">&lt;span class="spinner"&gt;&lt;/span&gt;</code></pre></div>
   </article>
 
   <article class="comp" id="empty">
@@ -748,7 +742,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <p>Sync a sheet or add a contract to get started.</p>
       <button class="btn btn--primary"><span class="material-symbols-outlined">add</span> New contract</button>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">html</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-markup">&lt;div class="empty-state"&gt;
+    <div class="comp-code"><pre><code class="language-markup">&lt;div class="empty-state"&gt;
   &lt;span class="material-symbols-outlined"&gt;inbox&lt;/span&gt;
   &lt;h3&gt;No contracts yet&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;
   &lt;button class="btn btn--primary"&gt;New contract&lt;/button&gt;
@@ -764,7 +758,7 @@ border: 0.5px solid var(--primary-line);   /* derived via color-mix */</code></p
       <div><div class="label-caps text-2 mb-3">Status mix</div><canvas id="chartDoughnut" height="220"></canvas></div>
       <div><div class="label-caps text-2 mb-3">Monthly volume</div><canvas id="chartBar" height="220"></canvas></div>
     </div></div>
-    <div class="comp-code"><div class="comp-code-bar"><span class="lang">js</span><button class="btn btn--ghost btn--xs copy-code">Copy</button></div><pre><code class="language-javascript">new Chart(ctx, {
+    <div class="comp-code"><pre><code class="language-javascript">new Chart(ctx, {
   type: 'doughnut',
   data: { datasets: [{ backgroundColor: DS_CHART.series }] }
 });
@@ -814,15 +808,8 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
     var ic = $('#themeToggle .material-symbols-outlined'); if (ic) ic.textContent = (t === 'light') ? 'light_mode' : 'dark_mode';
     try { localStorage.setItem('ds-theme', t); } catch (e) {}
   }
-  function applyRadius(r) {
-    if (r) docEl.setAttribute('data-radius', r); else docEl.removeAttribute('data-radius');
-    document.querySelectorAll('#radiusSeg .seg').forEach(function (b) { b.classList.toggle('active', (b.getAttribute('data-radius') || '') === (r || '')); });
-    try { localStorage.setItem('ds-radius', r); } catch (e) {}
-  }
   $('#themeToggle').addEventListener('click', function () { applyTheme(docEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); });
-  var rseg = $('#radiusSeg');
-  if (rseg) rseg.addEventListener('click', function (e) { var b = e.target.closest('.seg'); if (b) applyRadius(b.getAttribute('data-radius')); });
-  try { applyTheme(localStorage.getItem('ds-theme') || 'dark'); applyRadius(localStorage.getItem('ds-radius') || ''); } catch (e) {}
+  try { applyTheme(localStorage.getItem('ds-theme') || 'dark'); } catch (e) {}
 
   /* ── auto-fill empty code blocks from the rendered preview ───────────────── */
   function dedent(s) {
@@ -846,8 +833,11 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
     var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); return Promise.resolve();
   }
-  document.querySelectorAll('.copy-code').forEach(function (btn) {
-    btn.addEventListener('click', function () { copy(btn.closest('.comp-code').querySelector('code').textContent).then(function () { flash(btn, 'Copied'); }); });
+  document.querySelectorAll('.comp-code').forEach(function (box) {
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'btn btn--ghost btn--xs comp-copy'; btn.textContent = 'Copy';
+    btn.addEventListener('click', function () { copy(box.querySelector('code').textContent).then(function () { flash(btn, 'Copied'); }); });
+    box.appendChild(btn);
   });
   $('#copyCssBtn').addEventListener('click', function () {
     var btn = this;
