@@ -101,10 +101,13 @@
   .token.number, .token.boolean, .token.constant, .token.symbol { color: var(--warning); }
   .token.operator, .token.entity, .token.url { color: var(--text-2); }
   .token.function { color: var(--primary); }
-  /* tokens carry colour ONLY — never a box. Prism's .token.tag collides with the
-     system's .tag chip component (bg + border + padding), which drew a box behind
-     every tag. Reset all box styling on tokens inside highlighted code. */
-  code[class*="language-"] .token { background: none !important; border: none !important; padding: 0 !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; }
+  /* tokens carry colour ONLY. Prism's .token.tag collides with the system's .tag
+     chip component — which is display:inline-flex (flex DROPS the whitespace text
+     nodes between tag name + attributes, so the spaces vanished) AND adds bg/border/
+     padding/mono-font. Hard-reset every layout/box prop so tokens are plain text. */
+  code[class*="language-"] .token { display: inline !important; background: none !important; border: none !important;
+    padding: 0 !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+    font: inherit !important; letter-spacing: inherit !important; text-transform: none !important; width: auto !important; height: auto !important; }
 
   @media (max-width: 860px) { body { padding-left: 0; } .app-sidebar { display: none; } .app-content { padding: 20px 18px 80px; } }
 </style>
