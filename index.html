@@ -6,40 +6,14 @@
 <title>DriveSmart · Design System</title>
 <meta name="description" content="Live component gallery for the DriveSmart design system — dark glassmorphism, vanilla CSS, zero framework.">
 <link rel="stylesheet" href="drivesmart.css">
+<link rel="stylesheet" href="app.css">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 <script>window.Prism = { manual: true };</script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1/prism.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <style>
-  /* ── gallery chrome (not part of the system — lays out this page) ────────── */
-  html { scroll-behavior: smooth; }
-  body { padding-left: 268px; }
-
-  /* sidebar ---------------------------------------------------------------- */
-  .app-sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 268px; z-index: 20; display: flex; flex-direction: column; }
-  .app-sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 18px 18px 12px; }
-  .app-sidebar .brand .mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--r-lg); background: linear-gradient(to bottom right, var(--primary), var(--primary-container)); }
-  .app-sidebar .brand .mark .material-symbols-outlined { color: var(--surface-lowest); font-size: 19px; }
-  .app-sidebar .side-scroll { flex: 1; overflow-y: auto; padding: 6px 12px 18px; }
-  .nav-group { margin-top: 16px; }
-  .nav-group:first-child { margin-top: 4px; }
-  .nav-group-label { padding: 6px 12px 4px; font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-4); }
-  .nav-link { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border-radius: var(--r-lg); cursor: pointer;
-    font-family: var(--f-mono); font-size: 11px; letter-spacing: .03em; color: var(--text-2); border: 0.5px solid transparent; transition: all .15s; }
-  .nav-link:hover { background: var(--fill-1); color: var(--text-1); }
-  .nav-link.active { background: radial-gradient(140% 120% at 0% 50%, var(--primary-ghost), transparent 64%), var(--fill-1); color: var(--primary); border-color: color-mix(in srgb, var(--primary) 16%, transparent); }
-  .nav-link .material-symbols-outlined { font-size: 16px; opacity: .8; }
-
-  /* sidebar search + footer ------------------------------------------------ */
-  .side-search { padding: 0 12px 8px; }
-  .searchbar { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--r-lg);
-    background: var(--input-bg); border: 0.5px solid var(--hairline); color: var(--text-3); font-size: 13px; transition: all .2s; }
-  .searchbar:hover { border-color: var(--primary-line); color: var(--text-2); }
-  .searchbar .material-symbols-outlined { font-size: 18px; }
-  .searchbar .sb-hint { margin-left: auto; display: inline-flex; gap: 3px; }
-  .side-foot { border-top: 0.5px solid var(--hairline-soft); padding: 8px 12px 12px; }
-  .side-pages { display: flex; flex-direction: column; gap: 2px; }
-
+  /* ── gallery-specific layout (shared sidebar/palette/highlight chrome → app.css) ── */
   /* content + component blocks --------------------------------------------- */
   .app-content { padding: 40px 40px 120px; max-width: 1000px; margin-left: auto; margin-right: auto; }
   .group-title { scroll-margin-top: 80px; margin: 46px 0 6px; padding-top: 18px; border-top: 0.5px solid var(--hairline-soft); }
@@ -71,159 +45,51 @@
   .rad-box { width: 78px; height: 78px; background: var(--primary-ghost); border: 0.5px solid var(--primary-line); }
 
   .stage { position: relative; min-height: 120px; border-radius: var(--r-lg); border: 0.5px dashed var(--hairline); padding: 20px; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-lowest) 45%, transparent); width: 100%; }
-  .copied { color: var(--success) !important; }
 
-  /* command palette -------------------------------------------------------- */
-  .cmdk-overlay { position: fixed; inset: 0; z-index: 300; display: grid; place-items: start center; padding-top: 14vh;
-    background: rgba(5,8,12,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: ds-fade .15s ease; }
-  .cmdk { width: 100%; max-width: 560px; border-radius: var(--r-2xl); overflow: hidden;
-    background: var(--float-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-    border: 0.5px solid var(--glass-border-hi); box-shadow: 0 24px 60px rgba(0,0,0,.6); animation: ds-rise .2s cubic-bezier(.4,0,.2,1); }
-  .cmdk-input { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 0.5px solid var(--hairline); }
-  .cmdk-input .material-symbols-outlined { color: var(--text-3); }
-  .cmdk-input input { flex: 1; background: none; border: none; outline: none; color: var(--text-1); font-size: 15px; font-family: var(--f-body); }
-  .cmdk-list { max-height: 56vh; overflow-y: auto; padding: 8px; }
-  .cmdk-group-label { padding: 10px 12px 5px; font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-4); }
-  .cmdk-item { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: var(--r-lg); cursor: pointer; color: var(--text-1); font-size: 13px; }
-  .cmdk-item .material-symbols-outlined { font-size: 18px; color: var(--text-3); }
-  .cmdk-item .cmdk-grp { margin-left: auto; font-family: var(--f-mono); font-size: 10px; color: var(--text-4); letter-spacing: .04em; }
-  .cmdk-item.active, .cmdk-item:hover { background: var(--primary-ghost); color: var(--primary); }
-  .cmdk-item.active .material-symbols-outlined { color: var(--primary); }
-  .cmdk-empty { padding: 28px; text-align: center; color: var(--text-3); font-size: 13px; }
+  /* reference docs (Brand guide / Spec), rendered from markdown ------------- */
+  .doc-collapse { border: 0.5px solid var(--glass-border); border-radius: var(--r-xl); background: var(--glass-bg); overflow: hidden; margin-top: 14px; }
+  .doc-collapse > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; }
+  .doc-collapse > summary::-webkit-details-marker { display: none; }
+  .doc-collapse > summary:hover { background: var(--fill-1); }
+  .doc-collapse > summary h3 { font-family: var(--f-display); font-size: 21px; font-weight: 600; letter-spacing: -.01em; }
+  .doc-collapse .chev { color: var(--text-3); transition: transform .2s; flex: none; }
+  .doc-collapse[open] > summary .chev { transform: rotate(180deg); }
+  .doc-body { padding: 6px 26px 26px; border-top: 0.5px solid var(--hairline-soft); }
+  .prose { font-family: var(--f-body); color: var(--text-2); font-size: 15px; line-height: 1.72; }
+  .prose h1 { font-family: var(--f-display); font-size: 30px; letter-spacing: -.02em; margin: 8px 0 10px; color: var(--text-1); }
+  .prose h2 { font-family: var(--f-display); font-size: 22px; margin: 32px 0 8px; padding-top: 20px; border-top: 0.5px solid var(--hairline-soft); color: var(--text-1); }
+  .prose h3 { font-family: var(--f-display); font-size: 17px; margin: 22px 0 6px; color: var(--text-1); }
+  .prose h4 { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 18px 0 6px; }
+  .prose p { margin: 10px 0; }
+  .prose a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+  .prose strong { color: var(--text-1); font-weight: 600; }
+  .prose ul, .prose ol { margin: 10px 0; padding-left: 22px; }
+  .prose li { margin: 5px 0; }
+  .prose hr { border: none; height: 0.5px; background: var(--hairline); margin: 26px 0; }
+  .prose code { font-family: var(--f-mono); font-size: .86em; background: var(--fill-1); border: 0.5px solid var(--hairline); padding: 1px 6px; border-radius: var(--r-sm); color: var(--text-1); cursor: copy; transition: background .15s; }
+  .prose code:hover { background: var(--fill-2); }
+  .prose code.copied { color: var(--success); border-color: var(--success-line); }
+  .prose pre { background: var(--surface-low); border: 0.5px solid var(--hairline); border-radius: var(--r-lg); padding: 14px 16px; overflow-x: auto; margin: 14px 0; }
+  .prose pre code { background: none; border: none; padding: 0; cursor: auto; font-size: 13px; color: var(--text-2); white-space: pre; }
+  .prose blockquote { margin: 16px 0; padding: 12px 16px; border-radius: var(--r-lg);
+    background: radial-gradient(120% 160% at 0% 0%, var(--primary-ghost), transparent 60%), var(--glass-bg);
+    border: 0.5px solid color-mix(in srgb, var(--primary) 22%, transparent); }
+  .prose blockquote p { margin: 0; color: var(--text-1); }
+  .prose table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; border: 0.5px solid var(--glass-border); border-radius: var(--r-lg); overflow: hidden; }
+  .prose thead tr { background: var(--fill-1); }
+  .prose th { text-align: left; padding: 10px 14px; font-family: var(--f-mono); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3); border-bottom: 0.5px solid var(--hairline); }
+  .prose td { padding: 10px 14px; border-bottom: 0.5px solid var(--hairline-soft); color: var(--text-2); vertical-align: middle; }
+  .prose tbody tr:last-child td { border-bottom: none; }
+  .hex-chip { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 0.5px solid var(--hairline); margin-right: 7px; vertical-align: -2px; }
 
-  .modal-overlay.hidden, .drawer.hidden, .drawer-overlay.hidden, .cmdk-overlay.hidden { display: none !important; }
-
-  /* Prism syntax highlighting → mapped to design tokens (flips with theme) -- */
-  code[class*="language-"], pre[class*="language-"] { color: var(--text-2); text-shadow: none; background: none; }
-  .token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--text-4); font-style: italic; }
-  .token.punctuation { color: var(--text-3); }
-  .token.tag, .token.keyword, .token.selector, .token.important, .token.atrule { color: var(--primary); }
-  .token.attr-name, .token.property, .token.class-name { color: var(--idle); }
-  .token.attr-value, .token.string, .token.char, .token.regex { color: var(--success); }
-  .token.number, .token.boolean, .token.constant, .token.symbol { color: var(--warning); }
-  .token.operator, .token.entity, .token.url { color: var(--text-2); }
-  .token.function { color: var(--primary); }
-  /* tokens carry colour ONLY. Prism's .token.tag collides with the system's .tag
-     chip component — which is display:inline-flex (flex DROPS the whitespace text
-     nodes between tag name + attributes, so the spaces vanished) AND adds bg/border/
-     padding/mono-font. Hard-reset every layout/box prop so tokens are plain text. */
-  code[class*="language-"] .token { display: inline !important; background: none !important; border: none !important;
-    padding: 0 !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important;
-    font: inherit !important; letter-spacing: inherit !important; text-transform: none !important; width: auto !important; height: auto !important; }
-
-  @media (max-width: 860px) { body { padding-left: 0; } .app-sidebar { display: none; } .app-content { padding: 20px 18px 80px; } }
+  @media (max-width: 860px) { .app-content { padding: 20px 18px 80px; } }
 </style>
 </head>
 <body class="bg-grid-pattern">
 <div class="aurora-bg"></div>
 
 <!-- ── Sidebar (grouped nav) ───────────────────────────────────────────────── -->
-<aside class="app-sidebar glass-sidebar">
-  <div class="brand">
-    <span class="mark"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">directions_car</span></span>
-    <span class="text-headline-md">DriveSmart</span>
-  </div>
-  <div class="side-search">
-    <button class="searchbar" id="cmdkOpen">
-      <span class="material-symbols-outlined">search</span> Search…
-      <span class="sb-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
-    </button>
-  </div>
-  <div class="side-scroll">
-    <nav id="sideNav">
-      <div class="nav-group">
-        <div class="nav-group-label">Get started</div>
-        <a class="nav-link" href="#install"><span class="material-symbols-outlined">rocket_launch</span><span class="lbl">Installation</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Foundations</div>
-        <a class="nav-link" href="#colors"><span class="material-symbols-outlined">palette</span><span class="lbl">Colors</span></a>
-        <a class="nav-link" href="#typography"><span class="material-symbols-outlined">text_fields</span><span class="lbl">Typography</span></a>
-        <a class="nav-link" href="#radius"><span class="material-symbols-outlined">rounded_corner</span><span class="lbl">Radius</span></a>
-        <a class="nav-link" href="#elevation"><span class="material-symbols-outlined">layers</span><span class="lbl">Elevation</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Actions</div>
-        <a class="nav-link" href="#buttons"><span class="material-symbols-outlined">smart_button</span><span class="lbl">Buttons</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Surfaces</div>
-        <a class="nav-link" href="#cards"><span class="material-symbols-outlined">dashboard</span><span class="lbl">Glass cards</span></a>
-        <a class="nav-link" href="#kpi"><span class="material-symbols-outlined">monitoring</span><span class="lbl">KPI / Metric</span></a>
-        <a class="nav-link" href="#mesh"><span class="material-symbols-outlined">gradient</span><span class="lbl">Mesh tints</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Status &amp; tags</div>
-        <a class="nav-link" href="#status-chips"><span class="material-symbols-outlined">label</span><span class="lbl">Status chips</span></a>
-        <a class="nav-link" href="#badges"><span class="material-symbols-outlined">counter_1</span><span class="lbl">Badges</span></a>
-        <a class="nav-link" href="#tags"><span class="material-symbols-outlined">sell</span><span class="lbl">Tags</span></a>
-        <a class="nav-link" href="#dealer-pills"><span class="material-symbols-outlined">filter_alt</span><span class="lbl">Dealer pills</span></a>
-        <a class="nav-link" href="#dots"><span class="material-symbols-outlined">fiber_manual_record</span><span class="lbl">Dots</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Forms</div>
-        <a class="nav-link" href="#inputs"><span class="material-symbols-outlined">edit</span><span class="lbl">Inputs &amp; select</span></a>
-        <a class="nav-link" href="#textarea"><span class="material-symbols-outlined">notes</span><span class="lbl">Textarea</span></a>
-        <a class="nav-link" href="#field"><span class="material-symbols-outlined">view_agenda</span><span class="lbl">Field group</span></a>
-        <a class="nav-link" href="#input-group"><span class="material-symbols-outlined">attach_money</span><span class="lbl">Input group</span></a>
-        <a class="nav-link" href="#toggles"><span class="material-symbols-outlined">toggle_on</span><span class="lbl">Switch / check / radio</span></a>
-        <a class="nav-link" href="#range"><span class="material-symbols-outlined">tune</span><span class="lbl">Range</span></a>
-        <a class="nav-link" href="#search"><span class="material-symbols-outlined">search</span><span class="lbl">Search field</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Data display</div>
-        <a class="nav-link" href="#avatars"><span class="material-symbols-outlined">account_circle</span><span class="lbl">Avatars</span></a>
-        <a class="nav-link" href="#kv"><span class="material-symbols-outlined">list_alt</span><span class="lbl">Key-value</span></a>
-        <a class="nav-link" href="#progress"><span class="material-symbols-outlined">linear_scale</span><span class="lbl">Progress</span></a>
-        <a class="nav-link" href="#delta"><span class="material-symbols-outlined">trending_up</span><span class="lbl">Delta</span></a>
-        <a class="nav-link" href="#table"><span class="material-symbols-outlined">table</span><span class="lbl">Data table</span></a>
-        <a class="nav-link" href="#pagination"><span class="material-symbols-outlined">more_horiz</span><span class="lbl">Pagination</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Navigation</div>
-        <a class="nav-link" href="#breadcrumbs"><span class="material-symbols-outlined">chevron_right</span><span class="lbl">Breadcrumbs</span></a>
-        <a class="nav-link" href="#tabs"><span class="material-symbols-outlined">tab</span><span class="lbl">Tabs</span></a>
-        <a class="nav-link" href="#segmented"><span class="material-symbols-outlined">view_week</span><span class="lbl">Segmented</span></a>
-        <a class="nav-link" href="#sidenav"><span class="material-symbols-outlined">side_navigation</span><span class="lbl">Sidenav</span></a>
-        <a class="nav-link" href="#topnav"><span class="material-symbols-outlined">top_panel_open</span><span class="lbl">Topnav</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Overlays</div>
-        <a class="nav-link" href="#menu"><span class="material-symbols-outlined">menu_open</span><span class="lbl">Menu</span></a>
-        <a class="nav-link" href="#modal"><span class="material-symbols-outlined">open_in_full</span><span class="lbl">Modal</span></a>
-        <a class="nav-link" href="#drawer"><span class="material-symbols-outlined">dock_to_left</span><span class="lbl">Drawer</span></a>
-        <a class="nav-link" href="#popover"><span class="material-symbols-outlined">chat_bubble</span><span class="lbl">Popover</span></a>
-        <a class="nav-link" href="#tooltip"><span class="material-symbols-outlined">help</span><span class="lbl">Tooltip</span></a>
-        <a class="nav-link" href="#accordion"><span class="material-symbols-outlined">expand</span><span class="lbl">Accordion</span></a>
-        <a class="nav-link" href="#kbd"><span class="material-symbols-outlined">keyboard</span><span class="lbl">Keycap</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Feedback</div>
-        <a class="nav-link" href="#alert"><span class="material-symbols-outlined">info</span><span class="lbl">Alert</span></a>
-        <a class="nav-link" href="#banner"><span class="material-symbols-outlined">campaign</span><span class="lbl">Banner</span></a>
-        <a class="nav-link" href="#toast"><span class="material-symbols-outlined">notifications</span><span class="lbl">Toast</span></a>
-        <a class="nav-link" href="#skeleton"><span class="material-symbols-outlined">view_day</span><span class="lbl">Skeleton</span></a>
-        <a class="nav-link" href="#spinner"><span class="material-symbols-outlined">progress_activity</span><span class="lbl">Spinner</span></a>
-        <a class="nav-link" href="#empty"><span class="material-symbols-outlined">inbox</span><span class="lbl">Empty state</span></a>
-      </div>
-      <div class="nav-group">
-        <div class="nav-group-label">Data viz</div>
-        <a class="nav-link" href="#charts"><span class="material-symbols-outlined">pie_chart</span><span class="lbl">Charts</span></a>
-      </div>
-    </nav>
-  </div>
-  <div class="side-foot">
-    <div class="side-pages">
-      <a class="nav-link active" href="index.html"><span class="material-symbols-outlined">widgets</span><span class="lbl">Gallery</span></a>
-      <a class="nav-link" href="docs.html?doc=brand"><span class="material-symbols-outlined">palette</span><span class="lbl">Brand guide</span></a>
-      <a class="nav-link" href="docs.html?doc=design"><span class="material-symbols-outlined">description</span><span class="lbl">Spec</span></a>
-    </div>
-    <div class="flex items-center gap-2" style="padding:8px 2px 0">
-      <button class="btn btn--soft btn--sm flex-1" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> Copy CSS</button>
-      <button class="btn btn--icon" id="themeToggle" title="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
-    </div>
-  </div>
-</aside>
+<aside id="appSidebar" class="app-sidebar glass-sidebar"></aside>
 
 <!-- ── Content ─────────────────────────────────────────────────────────────── -->
 <main class="app-content">
@@ -280,6 +146,29 @@
       <a class="btn btn--soft" href="docs.html?doc=brand"><span class="material-symbols-outlined">palette</span> Open Brand guide</a>
       <a class="btn" href="docs.html?doc=design"><span class="material-symbols-outlined">description</span> Read the Spec</a>
     </div>
+  </article>
+
+  <!-- ══════════ REFERENCE ══════════ -->
+  <h2 class="group-title text-headline-lg">Reference</h2>
+
+  <article class="comp" id="brand-guide" data-keep>
+    <details class="doc-collapse">
+      <summary>
+        <div><h3>Brand guide</h3><p class="comp-desc" style="margin-top:4px">Plain-language style guide for designers &amp; marketing — every colour (copy-paste hex), font and size for Figma, Canva, slides, social or print. Rendered from <code class="text-mono">BRAND.md</code>.</p></div>
+        <span class="material-symbols-outlined chev">expand_more</span>
+      </summary>
+      <div class="doc-body"><div class="prose" data-md="BRAND.md"><p class="text-3">Loading…</p></div></div>
+    </details>
+  </article>
+
+  <article class="comp" id="spec" data-keep>
+    <details class="doc-collapse">
+      <summary>
+        <div><h3>Spec</h3><p class="comp-desc" style="margin-top:4px">Full technical reference — every token, class and rule. Rendered from <code class="text-mono">DESIGN.md</code>.</p></div>
+        <span class="material-symbols-outlined chev">expand_more</span>
+      </summary>
+      <div class="doc-body"><div class="prose" data-md="DESIGN.md"><p class="text-3">Loading…</p></div></div>
+    </details>
   </article>
 
   <!-- ══════════ FOUNDATIONS ══════════ -->
@@ -835,15 +724,6 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
   </footer>
 </main>
 
-<!-- ── command palette ─────────────────────────────────────────────────────── -->
-<div class="cmdk-overlay hidden" id="cmdk">
-  <div class="cmdk">
-    <div class="cmdk-input"><span class="material-symbols-outlined">search</span><input id="cmdkInput" placeholder="Search components…" autocomplete="off" spellcheck="false"><span class="kbd">esc</span></div>
-    <div class="cmdk-list" id="cmdkList"></div>
-    <div class="cmdk-empty hidden" id="cmdkEmpty">No matches.</div>
-  </div>
-</div>
-
 <!-- ── live overlays ───────────────────────────────────────────────────────── -->
 <div class="modal-overlay hidden" id="modalOverlay">
   <div class="modal">
@@ -861,20 +741,11 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
 </aside>
 <div class="toast-stack" id="toastStack"></div>
 
+<script src="app.js"></script>
 <script src="count-up.js"></script>
 <script>
 (function () {
-  var docEl = document.documentElement;
   var $ = function (s) { return document.querySelector(s); };
-
-  /* ── theme + roundness (persisted) ──────────────────────────────────────── */
-  function applyTheme(t) {
-    if (t === 'light') docEl.setAttribute('data-theme', 'light'); else docEl.removeAttribute('data-theme');
-    var ic = $('#themeToggle .material-symbols-outlined'); if (ic) ic.textContent = (t === 'light') ? 'light_mode' : 'dark_mode';
-    try { localStorage.setItem('ds-theme', t); } catch (e) {}
-  }
-  $('#themeToggle').addEventListener('click', function () { applyTheme(docEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light'); });
-  try { applyTheme(localStorage.getItem('ds-theme') || 'dark'); } catch (e) {}
 
   /* ── auto-fill empty code blocks from the rendered preview ───────────────── */
   // pretty-print live DOM → clean, indented HTML (one element per line)
@@ -909,6 +780,18 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
   });
   if (window.Prism) Prism.highlightAll();
 
+  /* ── render Brand guide + Spec from markdown ─────────────────────────────── */
+  if (window.marked) document.querySelectorAll('[data-md]').forEach(function (host) {
+    fetch(host.getAttribute('data-md')).then(function (r) { if (!r.ok) throw 0; return r.text(); }).then(function (md) {
+      host.innerHTML = marked.parse(md);
+      host.querySelectorAll('code').forEach(function (c) {
+        var t = c.textContent.trim();
+        if (/^#?[0-9A-Fa-f]{6}$/.test(t)) { var hex = t[0] === '#' ? t : '#' + t; var chip = document.createElement('span'); chip.className = 'hex-chip'; chip.style.background = hex; c.insertBefore(chip, c.firstChild); }
+        c.addEventListener('click', function () { copy(c.textContent.trim()).then(function () { c.classList.add('copied'); setTimeout(function () { c.classList.remove('copied'); }, 1100); }); });
+      });
+    }).catch(function () { host.innerHTML = '<p class="text-3">Couldn’t load ' + host.getAttribute('data-md') + ' (serve over http).</p>'; });
+  });
+
   /* ── copy per-demo + full CSS ───────────────────────────────────────────── */
   function flash(btn, msg) { var o = btn.textContent; btn.textContent = msg; btn.classList.add('copied'); setTimeout(function () { btn.textContent = o; btn.classList.remove('copied'); }, 1400); }
   function copy(text) {
@@ -928,58 +811,6 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
     });
     box.appendChild(btn);
   });
-  $('#copyCssBtn').addEventListener('click', function () {
-    var btn = this;
-    fetch('drivesmart.css').then(function (r) { return r.text(); }).then(copy)
-      .then(function () { flash(btn, 'Copied!'); }).catch(function () { flash(btn, 'serve over http'); });
-  });
-
-  /* ── command palette ────────────────────────────────────────────────────── */
-  var cmdk = $('#cmdk'), cmdkInput = $('#cmdkInput'), cmdkList = $('#cmdkList'), cmdkEmpty = $('#cmdkEmpty');
-  var ITEMS = Array.prototype.map.call(document.querySelectorAll('#sideNav .nav-link[href^="#"]'), function (a) {
-    return { id: a.getAttribute('href').slice(1),
-             label: (a.querySelector('.lbl') || a).textContent.trim(),
-             group: (a.closest('.nav-group').querySelector('.nav-group-label') || {}).textContent || '',
-             icon: (a.querySelector('.material-symbols-outlined') || {}).textContent || 'chevron_right' };
-  });
-  var activeIdx = 0, shown = [];
-  function renderCmdk(q) {
-    q = (q || '').toLowerCase().trim();
-    shown = ITEMS.filter(function (it) { return (it.label + ' ' + it.group).toLowerCase().indexOf(q) !== -1; });
-    activeIdx = 0;
-    cmdkEmpty.classList.toggle('hidden', shown.length > 0);
-    var html = '', lastG = null;
-    shown.forEach(function (it, i) {
-      if (it.group !== lastG) { html += '<div class="cmdk-group-label">' + it.group + '</div>'; lastG = it.group; }
-      html += '<div class="cmdk-item' + (i === 0 ? ' active' : '') + '" data-i="' + i + '" data-id="' + it.id + '">' +
-              '<span class="material-symbols-outlined">' + it.icon + '</span>' + it.label +
-              '<span class="cmdk-grp">' + it.group + '</span></div>';
-    });
-    cmdkList.innerHTML = html;
-  }
-  function setActive(i) {
-    var els = cmdkList.querySelectorAll('.cmdk-item'); if (!els.length) return;
-    activeIdx = (i + els.length) % els.length;
-    els.forEach(function (el, n) { el.classList.toggle('active', n === activeIdx); });
-    els[activeIdx].scrollIntoView({ block: 'nearest' });
-  }
-  function go(id) { closeCmdk(); var el = document.getElementById(id); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#' + id); } }
-  function openCmdk() { cmdk.classList.remove('hidden'); cmdkInput.value = ''; renderCmdk(''); cmdkInput.focus(); }
-  function closeCmdk() { cmdk.classList.add('hidden'); }
-  $('#cmdkOpen').addEventListener('click', openCmdk);
-  cmdkInput.addEventListener('input', function () { renderCmdk(this.value); });
-  cmdkInput.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIdx + 1); }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIdx - 1); }
-    else if (e.key === 'Enter') { e.preventDefault(); if (shown[activeIdx]) go(shown[activeIdx].id); }
-  });
-  cmdkList.addEventListener('click', function (e) { var it = e.target.closest('.cmdk-item'); if (it) go(it.getAttribute('data-id')); });
-  cmdk.addEventListener('click', function (e) { if (e.target === cmdk) closeCmdk(); });
-  document.addEventListener('keydown', function (e) {
-    if ((e.metaKey || e.ctrlKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); cmdk.classList.contains('hidden') ? openCmdk() : closeCmdk(); }
-    if (e.key === 'Escape') { closeCmdk(); hide(modalOverlay); closeDrawer(); }
-  });
-
   /* ── sortable table ─────────────────────────────────────────────────────── */
   var table = $('#demoTable');
   if (table) table.querySelectorAll('th.sortable').forEach(function (th) {
@@ -1008,6 +839,7 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
   function closeDrawer() { hide(drawer); hide(drawerOverlay); }
   drawerOverlay.addEventListener('click', closeDrawer);
   drawer.addEventListener('click', function (e) { if (e.target.closest('[data-close-drawer]')) closeDrawer(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { hide(modalOverlay); closeDrawer(); } });
   var toastStack = $('#toastStack'), tn = 0;
   $('#fireToast').addEventListener('click', function () {
     var k = [['success', 'check_circle', 'Contract saved.'], ['info', 'info', 'Sync started.'], ['danger', 'error', 'Sync failed — retry.']][tn++ % 3];
@@ -1016,22 +848,6 @@ DS_CHART.statusColor('paid');   // -> success hex</code></pre></div>
     toastStack.appendChild(t);
     setTimeout(function () { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 300); }, 2600);
   });
-
-  /* ── sidebar active link on scroll ──────────────────────────────────────── */
-  var links = document.querySelectorAll('#sideNav .nav-link[href^="#"]');
-  var byId = {}; links.forEach(function (l) { byId[l.getAttribute('href').slice(1)] = l; });
-  if ('IntersectionObserver' in window) {
-    var obs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          var l = byId[en.target.id]; if (!l) return;
-          links.forEach(function (x) { x.classList.remove('active'); }); l.classList.add('active');
-          l.scrollIntoView({ block: 'nearest' });
-        }
-      });
-    }, { rootMargin: '-30% 0px -60% 0px' });
-    document.querySelectorAll('.comp[id]').forEach(function (s) { obs.observe(s); });
-  }
 
   /* ── charts ─────────────────────────────────────────────────────────────── */
   function drawCharts() {

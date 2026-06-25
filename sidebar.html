@@ -1,0 +1,107 @@
+<!-- SHARED sidebar — injected into #appSidebar by app.js. Single source of truth.
+     All links are in-page anchors (single-page app); app.js intercepts them for
+     smooth-scroll and opens collapsible sections (Brand guide / Spec). -->
+<div class="brand">
+  <span class="mark"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">directions_car</span></span>
+  <span class="text-headline-md">DriveSmart</span>
+</div>
+<div class="side-search">
+  <button class="searchbar" id="cmdkOpen">
+    <span class="material-symbols-outlined">search</span> Search…
+    <span class="sb-hint"><span class="kbd">⌘</span><span class="kbd">K</span></span>
+  </button>
+</div>
+<div class="side-scroll">
+  <nav id="sideNav">
+    <div class="nav-group">
+      <div class="nav-group-label">Get started</div>
+      <a class="nav-link" href="#install"><span class="material-symbols-outlined">rocket_launch</span><span class="lbl">Installation</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Reference</div>
+      <a class="nav-link" href="#brand-guide"><span class="material-symbols-outlined">palette</span><span class="lbl">Brand guide</span></a>
+      <a class="nav-link" href="#spec"><span class="material-symbols-outlined">description</span><span class="lbl">Spec</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Foundations</div>
+      <a class="nav-link" href="#colors"><span class="material-symbols-outlined">palette</span><span class="lbl">Colors</span></a>
+      <a class="nav-link" href="#typography"><span class="material-symbols-outlined">text_fields</span><span class="lbl">Typography</span></a>
+      <a class="nav-link" href="#radius"><span class="material-symbols-outlined">rounded_corner</span><span class="lbl">Radius</span></a>
+      <a class="nav-link" href="#elevation"><span class="material-symbols-outlined">layers</span><span class="lbl">Elevation</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Actions</div>
+      <a class="nav-link" href="#buttons"><span class="material-symbols-outlined">smart_button</span><span class="lbl">Buttons</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Surfaces</div>
+      <a class="nav-link" href="#cards"><span class="material-symbols-outlined">dashboard</span><span class="lbl">Glass cards</span></a>
+      <a class="nav-link" href="#kpi"><span class="material-symbols-outlined">monitoring</span><span class="lbl">KPI / Metric</span></a>
+      <a class="nav-link" href="#mesh"><span class="material-symbols-outlined">gradient</span><span class="lbl">Mesh tints</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Status &amp; tags</div>
+      <a class="nav-link" href="#status-chips"><span class="material-symbols-outlined">label</span><span class="lbl">Status chips</span></a>
+      <a class="nav-link" href="#badges"><span class="material-symbols-outlined">counter_1</span><span class="lbl">Badges</span></a>
+      <a class="nav-link" href="#tags"><span class="material-symbols-outlined">sell</span><span class="lbl">Tags</span></a>
+      <a class="nav-link" href="#dealer-pills"><span class="material-symbols-outlined">filter_alt</span><span class="lbl">Dealer pills</span></a>
+      <a class="nav-link" href="#dots"><span class="material-symbols-outlined">fiber_manual_record</span><span class="lbl">Dots</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Forms</div>
+      <a class="nav-link" href="#inputs"><span class="material-symbols-outlined">edit</span><span class="lbl">Inputs &amp; select</span></a>
+      <a class="nav-link" href="#textarea"><span class="material-symbols-outlined">notes</span><span class="lbl">Textarea</span></a>
+      <a class="nav-link" href="#field"><span class="material-symbols-outlined">view_agenda</span><span class="lbl">Field group</span></a>
+      <a class="nav-link" href="#input-group"><span class="material-symbols-outlined">attach_money</span><span class="lbl">Input group</span></a>
+      <a class="nav-link" href="#toggles"><span class="material-symbols-outlined">toggle_on</span><span class="lbl">Switch / check / radio</span></a>
+      <a class="nav-link" href="#range"><span class="material-symbols-outlined">tune</span><span class="lbl">Range</span></a>
+      <a class="nav-link" href="#search"><span class="material-symbols-outlined">search</span><span class="lbl">Search field</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Data display</div>
+      <a class="nav-link" href="#avatars"><span class="material-symbols-outlined">account_circle</span><span class="lbl">Avatars</span></a>
+      <a class="nav-link" href="#kv"><span class="material-symbols-outlined">list_alt</span><span class="lbl">Key-value</span></a>
+      <a class="nav-link" href="#progress"><span class="material-symbols-outlined">linear_scale</span><span class="lbl">Progress</span></a>
+      <a class="nav-link" href="#delta"><span class="material-symbols-outlined">trending_up</span><span class="lbl">Delta</span></a>
+      <a class="nav-link" href="#table"><span class="material-symbols-outlined">table</span><span class="lbl">Data table</span></a>
+      <a class="nav-link" href="#pagination"><span class="material-symbols-outlined">more_horiz</span><span class="lbl">Pagination</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Navigation</div>
+      <a class="nav-link" href="#breadcrumbs"><span class="material-symbols-outlined">chevron_right</span><span class="lbl">Breadcrumbs</span></a>
+      <a class="nav-link" href="#tabs"><span class="material-symbols-outlined">tab</span><span class="lbl">Tabs</span></a>
+      <a class="nav-link" href="#segmented"><span class="material-symbols-outlined">view_week</span><span class="lbl">Segmented</span></a>
+      <a class="nav-link" href="#sidenav"><span class="material-symbols-outlined">side_navigation</span><span class="lbl">Sidenav</span></a>
+      <a class="nav-link" href="#topnav"><span class="material-symbols-outlined">top_panel_open</span><span class="lbl">Topnav</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Overlays</div>
+      <a class="nav-link" href="#menu"><span class="material-symbols-outlined">menu_open</span><span class="lbl">Menu</span></a>
+      <a class="nav-link" href="#modal"><span class="material-symbols-outlined">open_in_full</span><span class="lbl">Modal</span></a>
+      <a class="nav-link" href="#drawer"><span class="material-symbols-outlined">dock_to_left</span><span class="lbl">Drawer</span></a>
+      <a class="nav-link" href="#popover"><span class="material-symbols-outlined">chat_bubble</span><span class="lbl">Popover</span></a>
+      <a class="nav-link" href="#tooltip"><span class="material-symbols-outlined">help</span><span class="lbl">Tooltip</span></a>
+      <a class="nav-link" href="#accordion"><span class="material-symbols-outlined">expand</span><span class="lbl">Accordion</span></a>
+      <a class="nav-link" href="#kbd"><span class="material-symbols-outlined">keyboard</span><span class="lbl">Keycap</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Feedback</div>
+      <a class="nav-link" href="#alert"><span class="material-symbols-outlined">info</span><span class="lbl">Alert</span></a>
+      <a class="nav-link" href="#banner"><span class="material-symbols-outlined">campaign</span><span class="lbl">Banner</span></a>
+      <a class="nav-link" href="#toast"><span class="material-symbols-outlined">notifications</span><span class="lbl">Toast</span></a>
+      <a class="nav-link" href="#skeleton"><span class="material-symbols-outlined">view_day</span><span class="lbl">Skeleton</span></a>
+      <a class="nav-link" href="#spinner"><span class="material-symbols-outlined">progress_activity</span><span class="lbl">Spinner</span></a>
+      <a class="nav-link" href="#empty"><span class="material-symbols-outlined">inbox</span><span class="lbl">Empty state</span></a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Data viz</div>
+      <a class="nav-link" href="#charts"><span class="material-symbols-outlined">pie_chart</span><span class="lbl">Charts</span></a>
+    </div>
+  </nav>
+</div>
+<div class="side-foot">
+  <div class="flex items-center gap-2">
+    <button class="btn btn--soft btn--sm flex-1" id="copyCssBtn"><span class="material-symbols-outlined">content_copy</span> Copy CSS</button>
+    <button class="btn btn--icon" id="themeToggle" title="Toggle theme"><span class="material-symbols-outlined">dark_mode</span></button>
+  </div>
+</div>

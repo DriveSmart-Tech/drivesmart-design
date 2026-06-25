@@ -28,8 +28,8 @@ Fonts (Hanken Grotesk / Inter / Geist) are `@import`ed inside `drivesmart.css`.
 - **`print.css`** — light report/PDF theme (`<body class="report">`).
 - **`chart-theme.js`** — Chart.js theme → `DS_CHART` (load after chart.js).
 - **`count-up.js`** — animates `[data-count]` numbers.
-- **`index.html`** — the live gallery (served via GitHub Pages above).
-- **`docs.html`** — in-browser reader for the Brand guide (`docs.html?doc=brand`) and Spec (`docs.html?doc=design`).
+- **`index.html`** — the live gallery (served via GitHub Pages above). Single page: components, plus collapsible **Brand guide** (from `BRAND.md`) and **Spec** (from `DESIGN.md`) sections.
+- **`app.css` / `app.js` / `sidebar.html`** — shared gallery chrome (sidebar nav, ⌘K command palette, syntax highlighting).
 - **[`DESIGN.md`](DESIGN.md)** — full spec: every token, class, rule.
 - **[`BRAND.md`](BRAND.md)** — non-code brand spec for designers / marketing.
 
